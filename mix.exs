@@ -14,7 +14,7 @@ defmodule ExAlice.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison],
+    [applications: [:logger, :httpoison, :erlastic_search],
      mod: {ExAlice, []}]
   end
 
@@ -29,9 +29,14 @@ defmodule ExAlice.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.8"},
       {:poison, "~> 1.5.0"},
-      {:towel, "~> 0.2"}
+      {:httpoison, "~> 0.8"},
+      # {:tirex, git: "https://github.com/Zatvobor/tirexs.git", tag: "v0.7.2"},
+      {:erlastic_search, "~> 1.0.0"},
+      {:hackney, "~> 1.4.4", [optional: false, hex: :hackney, override: true]},
+      # {:jsx, ~r/.*/, [path: "deps/jsx"]},
+      # {:jsx, git: "https://github.com/talentdeficit/jsx.git", tag: "v2.7.1"},
+      {:towel, "~> 0.2"},
     ]
   end
 end

@@ -27,7 +27,8 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
     coords = geocode_coords(response)
     bounds = geocode_bounds(response)
     location = geocode_location(response)
-    %{coords | bounds: bounds, location: location}
+    coords = Dict.put(coords, :bounds, bounds)
+    coords = Dict.put(coords, :location, location)
   end
 
   defp parse_reverse_geocode(response) do
@@ -38,15 +39,15 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
 
   defp geocode_coords(%{"geometry" => %{"location" => coords}}) do
     %{"lat" => lat, "lng" => lon} = coords
-    %Geocoder.Coords{lat: lat, lon: lon}
+    %{lat: lat, lon: lon}
   end
 
   defp geocode_bounds(%{"geometry" => %{"bounds" => bounds}}) do
     %{"northeast" => %{"lat" => north, "lng" => east},
       "southwest" => %{"lat" => south, "lng" => west}} = bounds
-    %Geocoder.Bounds{top: north, right: east, bottom: south, left: west}
+    %{top: north, right: east, bottom: south, left: west}
   end
-  defp geocode_bounds(_), do: %Geocoder.Bounds{}
+  defp geocode_bounds(_), do: %{bounds: %{}}
 
   @components ["locality", "administrative_area_level_1", "country"]
   @map %{
@@ -66,7 +67,7 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
 
     components
     |> Enum.filter_map(type, map)
-    |> Enum.reduce(%Geocoder.Location{}, reduce)
+    |> Enum.reduce(%{}, reduce)
   end
 
   defp request(path, params) do
