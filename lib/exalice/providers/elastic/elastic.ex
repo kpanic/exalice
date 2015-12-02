@@ -24,7 +24,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
   end
 
   def parse_response(response, acc \\ []) do
-    sources = extract_sources(response, acc)
+    extract_sources(response, acc)
   end
 
   defp extract_sources([head|tail], acc) do
