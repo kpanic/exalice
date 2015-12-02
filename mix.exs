@@ -31,12 +31,10 @@ defmodule ExAlice.Mixfile do
     [
       {:poison, "~> 1.5.0"},
       {:httpoison, "~> 0.8"},
-      # {:tirex, git: "https://github.com/Zatvobor/tirexs.git", tag: "v0.7.2"},
       {:erlastic_search, "~> 1.0.0"},
       {:hackney, "~> 1.4.4", [optional: false, hex: :hackney, override: true]},
-      # {:jsx, ~r/.*/, [path: "deps/jsx"]},
-      # {:jsx, git: "https://github.com/talentdeficit/jsx.git", tag: "v2.7.1"},
       {:towel, "~> 0.2"},
+      {:uuid, "~> 1.1.1"},
     ]
   end
 end
