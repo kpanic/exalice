@@ -8,13 +8,11 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   def index(documents) do
     documents = prepare_bulk(documents)
-    IO.inspect documents
     index_docs(documents)
   end
 
   defp index_docs(docs) do
     params = erls_params()
-    IO.inspect params
     :erlastic_search.bulk_index_docs(params, docs)
   end
 
@@ -27,12 +25,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
        Map.to_list(head)}])
   end
 
-  defp add_bulk_metadata([content], result) do
+  defp add_bulk_metadata(content, result) when is_list(content) do
+    content = List.first(content)
     result ++ [{"exalice", "location", UUID.uuid4(), Map.to_list(content)}]
   end
 
-  defp add_bulk_metadata([], result) do
-    [{"exalice", "location", UUID.uuid4(), Map.to_list(result)}]
+  defp add_bulk_metadata(content, result) when not is_list(content) do
+    result ++ [{"exalice", "location", UUID.uuid4(), Map.to_list(content)}]
   end
 
 end

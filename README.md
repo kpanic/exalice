@@ -17,3 +17,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
         def application do
           [applications: [:exalice]]
         end
+
+To run the import:
+
+    mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import([])"
