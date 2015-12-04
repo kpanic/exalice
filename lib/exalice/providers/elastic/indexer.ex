@@ -8,8 +8,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   def index(documents) do
     documents
-    |> Enum.map(&prepare_doc(&1))
+    |> prepare_doc
     |> index_docs
+  end
+
+  defp prepare_doc(docs) when is_list(docs) do
+    Enum.map(docs, fn doc -> [{"exalice", "location", UUID.uuid4(),
+        Map.to_list(doc)}] end)
   end
 
   defp prepare_doc(doc) do
@@ -19,6 +24,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   defp index_docs(docs) do
     params = erls_params()
     docs = List.flatten(docs)
+    # TODO: Convert docs to a common format before indexing
     :erlastic_search.bulk_index_docs(params, docs)
   end
 end
