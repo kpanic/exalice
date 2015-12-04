@@ -12,16 +12,12 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     File.stream!(file)
     |> Stream.chunk(chunk_number, chunk_number, [])
     |> Stream.map(fn chunk ->
-        chunk
-        |> Stream.map(&Poison.decode!(&1))
+        json_chunk = "[" <> Enum.join(chunk, ",") <> "]"
+
+        json_chunk
+        |> Poison.decode!
     end)
-    |> Enum.map(&Task.async(fn -> index(&1) end))
-    # |> Enum.map(&Task.await/1)
-        # chunk
-        # |> Enum.map(fn(doc) -> (fn -> doc end )end)
-        # |> Enum.map(&Task.async(fn -> index(&1) end))
-        # |> Enum.map(&Task.await/1)
-    # end)
+    |> Enum.map(&spawn(fn -> index(&1) end))
   end
 
   defp index(chunks) do
