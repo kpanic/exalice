@@ -15,11 +15,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
         chunk
         |> Stream.map(&Poison.decode!(&1))
     end)
-    |> Enum.map(fn chunk ->
-        chunk
-        |> Enum.map(&(&1))
-        |> index
-    end)
+    |> Enum.map(&Task.async(fn -> index(&1) end))
+    # |> Enum.map(&Task.await/1)
+        # chunk
+        # |> Enum.map(fn(doc) -> (fn -> doc end )end)
+        # |> Enum.map(&Task.async(fn -> index(&1) end))
+        # |> Enum.map(&Task.await/1)
+    # end)
   end
 
   defp index(chunks) do
