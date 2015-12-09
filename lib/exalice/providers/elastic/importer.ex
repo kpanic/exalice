@@ -17,10 +17,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
         json_chunk
         |> Poison.decode!
     end)
-    |> Enum.map(&index(&1))
+    |> Enum.map(&spawn(__MODULE__, :index, [&1]))
   end
 
-  defp index(chunks) do
+  def index(chunks) do
     ExAlice.Geocoder.Providers.Elastic.Indexer.index(chunks)
   end
 end
