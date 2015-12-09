@@ -18,26 +18,10 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
     |> fmap(&parse_geocode/1)
   end
 
-  def reverse_geocode(%{lat: lat, lon: lon}) do
-    reverse_geocode({lat,lon})
-  end
-  def reverse_geocode({lat,lon}) do
-    request("maps/api/geocode/json", [{"latlng", "#{lat},#{lon}"}])
-    |> fmap(&parse_reverse_geocode/1)
-  end
-
   defp parse_geocode(response) do
     coords = geocode_coords(response)
-    bounds = geocode_bounds(response)
     location = geocode_location(response)
-    coords = Dict.put(coords, :bounds, bounds)
     Dict.put(coords, :location, location)
-  end
-
-  defp parse_reverse_geocode(response) do
-    coords = geocode_coords(response)
-    location = geocode_location(response)
-    %{coords | location: location}
   end
 
   defp geocode_coords(%{"geometry" => %{"location" => coords}}) do
@@ -45,18 +29,16 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
     %{lat: lat, lon: lon}
   end
 
-  defp geocode_bounds(%{"geometry" => %{"bounds" => bounds}}) do
-    %{"northeast" => %{"lat" => north, "lng" => east},
-      "southwest" => %{"lat" => south, "lng" => west}} = bounds
-    %{top: north, right: east, bottom: south, left: west}
-  end
-  defp geocode_bounds(_), do: %{bounds: %{}}
 
-  @components ["locality", "administrative_area_level_1", "country"]
+  @components ["locality", "administrative_area_level_1", "country", "route",
+    "street_number", "postal_code"]
   @map %{
     "locality" => :city,
     "administrative_area_level_1" => :state,
-    "country" => :country
+    "country" => :country,
+    "route" => :street,
+    "street_number" => :housenumber,
+    "postal_code" => :postcode
   }
   defp geocode_location(%{"address_components" => components}) do
     name = &Map.get(&1, "long_name")
