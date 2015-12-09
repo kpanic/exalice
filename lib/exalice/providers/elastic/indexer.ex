@@ -1,10 +1,10 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
+
   require UUID
   require Record
-  Record.defrecord :erls_params, [host: "127.0.0.1", port: 9200, http_client_options: [],
-    timeout: :infinity, ctimeout: :infinity]
+  Record.defrecord :erls_params, ExAlice.Geocoder.config(:erls_params)
 
-  @index_name "exalice"
+  @index_name ExAlice.Geocoder.config(:index)
 
   def index(documents) do
     documents
@@ -13,12 +13,12 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp prepare_doc(docs) when is_list(docs) do
-    Enum.map(docs, fn doc -> [{"exalice", "location", UUID.uuid4(),
+    Enum.map(docs, fn doc -> [{@index_name, "location", UUID.uuid4(),
         Map.to_list(doc)}] end)
   end
 
   defp prepare_doc(doc) do
-    [{"exalice", "location", UUID.uuid4(), Map.to_list(doc)}]
+    [{@index_name, "location", UUID.uuid4(), Map.to_list(doc)}]
   end
 
   defp index_docs(docs) do

@@ -10,4 +10,8 @@ defmodule ExAlice.Geocoder do
     end
     location
   end
+
+  def config(key, app \\ :exalice, default \\ nil) do
+    Application.get_env(app, key, default)
+  end
 end

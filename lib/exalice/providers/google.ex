@@ -31,7 +31,7 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
     bounds = geocode_bounds(response)
     location = geocode_location(response)
     coords = Dict.put(coords, :bounds, bounds)
-    coords = Dict.put(coords, :location, location)
+    Dict.put(coords, :location, location)
   end
 
   defp parse_reverse_geocode(response) do
