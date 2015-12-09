@@ -22,7 +22,9 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 To run the import:
 
-    mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import([])"
+    mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import" # with sample data
+
+    mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import(\"world-streets-full.json\")" # with your data
 
 To geocode:
 

@@ -1,9 +1,13 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
-  def import(_) do
+  def import(file \\ false) do
+    unless is_binary(file) do
+      file = "data/germany-streets.json"
+    end
+
     IO.puts "Importing..."
 
-    File.stream!("data/germany-streets.json")
+    File.stream!(file)
     |> Stream.chunk(5000)
     |> Stream.map(fn chunk ->
         chunk
