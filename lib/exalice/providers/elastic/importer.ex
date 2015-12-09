@@ -8,7 +8,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     IO.puts "Importing..."
 
     File.stream!(file)
-    |> Stream.chunk(5000)
+    |> Stream.chunk(5000, 5000, [])
     |> Stream.map(fn chunk ->
         chunk
         |> Stream.map(&Poison.decode!(&1))
