@@ -1,3 +1,6 @@
+# took from
+# https://github.com/knrz/geocoder/blob/master/lib/geocoder/providers/google_maps.ex
+
 defmodule ExAlice.Geocoder.Providers.GoogleMaps do
   use HTTPoison.Base
   use Towel
