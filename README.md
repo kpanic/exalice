@@ -20,6 +20,14 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
   3. Ensure that Elasticsearch is running
 
+Run these commands:
+
+    curl -XDELETE localhost:9200/exalice/?refresh=true
+
+    curl -XPOST localhost:9200/exalice/?refresh=true
+
+    curl -XPUT localhost:9200/exalice/_settings?refresh=true -d '{ "index" : { "refresh_interval" : "-1" } }'
+
 To run the import:
 
     mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import" # with sample data
@@ -30,5 +38,5 @@ To geocode:
 
     mix run -e "ExAlice.Geocoder.geocode(\"A Sunny Street, 2, Everywhere\")"
 
-NOTE: mapping in Elasticsearch are not yet present, results may vary after
+NOTE: mappings in Elasticsearch are not yet present, results may vary after
 geocoding the first time :)
