@@ -17,7 +17,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
         json_chunk
         |> Poison.decode!
     end)
-    |> Enum.map(&spawn(fn -> index(&1) end))
+    |> Enum.map(&index(&1))
   end
 
   defp index(chunks) do
