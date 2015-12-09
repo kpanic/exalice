@@ -14,13 +14,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp prepare_doc(docs) when is_list(docs) do
     Enum.map(docs, fn doc ->
-      [{"exalice", "location", UUID.uuid4(), Map.to_list(filter_doc(doc))}]
+      [{@index_name, "location", UUID.uuid4(), Map.to_list(filter_doc(doc))}]
     end
     )
   end
 
   defp prepare_doc(doc) do
-    [{"exalice", "location", UUID.uuid4(), Map.to_list(filter_doc(doc))}]
+    [{@index_name, "location", UUID.uuid4(), Map.to_list(filter_doc(doc))}]
   end
 
   defp filter_doc(%{"lat" => lat, "lon" => lon,
