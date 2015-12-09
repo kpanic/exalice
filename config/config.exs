@@ -13,7 +13,7 @@ use Mix.Config
 config :exalice, 
   index: :exalice, 
   file: "data/germany-streets.json",
-  chunks: 5000,
+  chunks: 10000,
   erls_params: [host: "127.0.0.1", port: 9200, http_client_options: [],
     timeout: :infinity, ctimeout: :infinity]
 #
