@@ -30,7 +30,7 @@ Run these commands:
 
 To run the import:
 
-    mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import" # with sample data
+    mix exalice.bootstrap # with sample data
 
     mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import(\"world-streets-full.json\")" # with your data
 
