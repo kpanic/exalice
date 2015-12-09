@@ -14,9 +14,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp prepare_doc(docs) when is_list(docs) do
     Stream.map(docs, fn doc ->
-      [{@index_name, "location", UUID.uuid4(), Map.to_list(filter_doc(doc))}]
-    end
-    )
+      [{@index_name, "location", UUID.uuid4(), Map.to_list(doc)}] end)
     |> Enum.filter(fn(x) -> x != [] end)
   end
 
