@@ -18,6 +18,15 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:exalice]]
         end
 
+  3. Ensure that Elasticsearch is running
+
 To run the import:
 
     mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import([])"
+
+To geocode:
+
+    mix run -e "ExAlice.Geocoder.geocode(\"A Sunny Street, 2, Everywhere\")"
+
+NOTE: mapping in Elasticsearch are not yet present, results may vary after
+geocoding the first time :)
