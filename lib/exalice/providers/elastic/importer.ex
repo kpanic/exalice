@@ -5,7 +5,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
       file = ExAlice.Geocoder.config(:file)
     end
 
-    IO.puts "Importing..."
+    IO.puts "Importing...  #{file}"
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
 
