@@ -1,7 +1,12 @@
 defmodule Mix.Tasks.Exalice.Bootstrap do
   use Application
   use Mix.Task
-  # NOTE: run me with 'mix exalice.bootstrap' (lowercase)
+  @shortdoc "Bootstrap ExAlice"
+
+  @doc """
+  Bootstrap ExAlice by populating the "exalice" Elasticsearch index with sample
+  data
+  """
 
   def run(args) do
     # NOTE: Hackney has to be started manually in the task
