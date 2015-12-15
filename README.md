@@ -1,6 +1,6 @@
 # ExAlice
 
-**TODO: Add description**
+**WARNING: this is just one of my elixir playground, play with it at your own RISK! It might break your IoT devices! ;)**
 
 ## Installation
 
