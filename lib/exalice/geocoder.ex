@@ -1,11 +1,13 @@
 defmodule ExAlice.Geocoder do
   use HTTPoison.Base
+  alias ExAlice.Geocoder.Providers.Elastic, as: Elastic
+  alias ExAlice.Geocoder.Providers.GoogleMaps, as: GoogleMaps
 
   def geocode(where) do
-    location = ExAlice.Geocoder.Providers.Elastic.geocode(where)
+    location = Elastic.geocode(where)
     if location == [] do
-      {:ok, location} = ExAlice.Geocoder.Providers.GoogleMaps.geocode(where)
-      {:ok, _} = ExAlice.Geocoder.Providers.Elastic.Indexer.index(location)
+      {:ok, location} = GoogleMaps.geocode(where)
+      {:ok, _} = Elastic.Indexer.index(location)
       location = [location]
     end
     location
