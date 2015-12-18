@@ -35,6 +35,7 @@ defmodule ExAlice.Mixfile do
       {:hackney, "~> 1.4.4", [optional: false, hex: :hackney, override: true]},
       {:towel, "~> 0.2"},
       {:uuid, "~> 1.1.1"},
+      {:credo, "~> 0.1.9", only: [:dev, :test]}
     ]
   end
 end
