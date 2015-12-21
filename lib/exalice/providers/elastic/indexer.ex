@@ -1,8 +1,10 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
+  import Tirexs.Bulk
+  require Tirexs.ElasticSearch
+
+  @settings Tirexs.ElasticSearch.config()
 
   require UUID
-  require Record
-  Record.defrecord :erls_params, ExAlice.Geocoder.config(:erls_params)
 
   @index_name ExAlice.Geocoder.config(:index)
 
@@ -59,7 +61,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp bulk_index(docs) do
-    params = erls_params()
-    :erlastic_search.bulk_index_docs(params, docs)
+    Tirexs.Bulk.store [index: @index_name, refresh: false], @settings, do: docs
   end
 end

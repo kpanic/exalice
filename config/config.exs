@@ -10,12 +10,10 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-config :exalice, 
-  index: :exalice, 
+config :exalice,
+  index: :exalice,
   file: "data/germany-streets.json",
-  chunks: 10000,
-  erls_params: [host: "127.0.0.1", port: 9200, http_client_options: [],
-    timeout: :infinity, ctimeout: :infinity]
+  chunks: 10000
 #
 # And access this configuration in your application as:
 #

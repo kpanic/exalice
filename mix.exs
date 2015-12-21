@@ -14,7 +14,7 @@ defmodule ExAlice.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison, :erlastic_search],
+    [applications: [:logger, :httpoison],
      mod: {ExAlice, []}]
   end
 
