@@ -1,37 +1,25 @@
 defmodule ExAlice.Geocoder.Providers.Elastic do
-  use HTTPoison.Base
-  use Towel
+  import Tirexs.Search
 
-  @index "exalice"
+  require Tirexs.Query
+
+  @index ExAlice.Geocoder.config(:index)
 
   def geocode(address) do
-    search_query = %{
-              query: %{
-                  filtered: %{
-                      query: %{
-                          match: %{
-                              _all: %{
-                                  query: address
-                              }
-                          }
-                      }
-                  }
-              }
-          }
+    locations = search [index: @index] do
+                  query do
+                    filtered do
+                      query do
+                        match "_all", address
+                      end
+                    end
+                  end
+                end
 
-    {:ok, response} = :erlastic_search.search(@index, "location", search_query)
-    parse_response(response["hits"]["hits"])
-  end
+    result = Tirexs.Query.create_resource(locations)
 
-  def parse_response(response, acc \\ []) do
-    extract_sources(response, acc)
-  end
 
-  defp extract_sources([head|tail], acc) do
-    extract_sources(tail, acc ++ [Dict.get(head, "_source")])
-  end
-
-  defp extract_sources([], acc) do
-    acc
+    Tirexs.Query.result(result, :hits)
+    |> Enum.map(fn item -> Map.get(item, :_source) end)
   end
 end
