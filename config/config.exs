@@ -13,7 +13,7 @@ use Mix.Config
 config :exalice,
   index: :exalice,
   file: "data/germany-streets.json",
-  chunks: 10000
+  chunks: 15000
 #
 # And access this configuration in your application as:
 #
