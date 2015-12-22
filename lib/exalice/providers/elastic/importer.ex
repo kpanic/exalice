@@ -17,8 +17,9 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
         json_chunk
         |> Poison.decode!
     end)
-    |> Enum.map(&Task.async(__MODULE__, :index, [&1]))
-    |> Enum.map(&Task.await(&1))
+    |> Stream.map(&Task.async(__MODULE__, :index, [&1]))
+    |> Stream.map(&Task.await(&1))
+    |> Stream.run
   end
 
   def index(chunks) do
