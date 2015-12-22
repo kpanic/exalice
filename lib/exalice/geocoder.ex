@@ -7,8 +7,8 @@ defmodule ExAlice.Geocoder do
     location = Elastic.geocode(where)
     if location == [] do
       {:ok, location} = GoogleMaps.geocode(where)
-      {:ok, _} = Elastic.Indexer.index(location)
-      location = [location]
+      {:ok, 200, _} = Elastic.Indexer.index([location])
+
     end
     location
   end
