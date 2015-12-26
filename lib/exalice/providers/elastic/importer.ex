@@ -1,5 +1,7 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
+  alias ExAlice.Geocoder.Providers.Elastic.Indexer
+
   def import(file \\ false) do
     unless is_binary(file) do
       file = ExAlice.Geocoder.config(:file)
@@ -9,19 +11,30 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
 
-    File.stream!(file)
-    |> Stream.chunk(chunk_number, chunk_number, [])
-    |> Stream.map(fn chunk ->
-        json_chunk = "[" <> Enum.join(chunk, ",") <> "]"
-
-        json_chunk
-        |> Poison.decode!
-    end)
+    read_file(file)
+    |> chunk(chunk_number)
+    |> json_decode
     # TODO: Figure out how to Task.async nicely, without OOM killers
-    |> Enum.map(&index(&1))
+    |> index
+  end
+
+  def read_file(file) do
+    File.stream!(file)
+    |> Enum.map(fn content -> String.split(content, "\n", trim: true) end)
+  end
+
+  def chunk(data, chunk_number) do
+    Stream.chunk(data, chunk_number, chunk_number, [])
+  end
+
+  def json_decode(chunks) do
+    Enum.map(chunks, fn chunk ->
+        chunk = String.strip(Enum.join(chunk, ","), ?,)
+        Poison.decode! "[" <> chunk <> "]"
+    end)
   end
 
   def index(chunks) do
-    ExAlice.Geocoder.Providers.Elastic.Indexer.index(chunks)
+    Indexer.index chunks
   end
 end

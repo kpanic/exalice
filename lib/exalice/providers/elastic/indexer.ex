@@ -14,59 +14,63 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
     |> index_docs
   end
 
-  defp prepare_doc(docs) when is_list(docs) do
+  defp prepare_doc(docs) do
+    docs = List.flatten docs
     Stream.map(docs, fn doc ->
-      doc = filter_doc(doc)
-      metadata = [{:type, "location"}, {:_id, UUID.uuid4()}]
-      merged_doc = Keyword.merge(doc, metadata)
-      [{:index, merged_doc}]
+      filter_doc(doc)
     end)
   end
 
-  defp prepare_doc(doc) do
-      doc = filter_doc(doc)
-      IO.inspect doc
-      metadata = [{:type, "location"}, {:_id, UUID.uuid4()}]
-      merged_doc = Keyword.merge(doc, metadata)
-      [{:index, merged_doc}]
-  end
+  defp filter_doc(doc) do
+    case doc do
+      # openstreetmap format
+      %{"lat" => lat, "lon" => lon,
+        "tags" =>
+        %{"addr:city" => city, "addr:country" => country,
+          "addr:housenumber" => housenumber, "addr:postcode" => postcode,
+          "addr:street" => street}
+      } ->
 
-  defp filter_doc(%{"lat" => lat, "lon" => lon,
-    "tags" =>
-      %{"addr:city" => city, "addr:country" => country,
-        "addr:housenumber" => housenumber, "addr:postcode" => postcode,
-        "addr:street" => street}
-    }) do
+        coordinates = [lat: lat, lon: lon]
+        location = [location: [city: city,
+            street: street, housenumber: housenumber,
+            postcode: postcode, state: country]]
+        metadata = [type: "location", _id: UUID.uuid4()]
+        doc = metadata ++ coordinates ++ location
+        [index: doc]
 
-    coordinates = [{:lat, lat}, {:lon, lon}]
-    location = [{:location, [{:city, city}, {:state, country},
-        {:street, street}, {:housenumber, housenumber},
-        {:postcode, postcode}]}]
-    Keyword.merge(coordinates, location)
-  end
+      # geocoder format
+      %{lat: lat, lon: lon,
+        location: %{city: city, country: country,
+          housenumber: housenumber, state: state,
+          postcode: postcode, street: street}} ->
 
-  defp filter_doc(%{lat: lat, lon: lon,
-     location: %{city: city, country: country,
-       housenumber: housenumber, state: state,
-       postcode: postcode, street: street},
-     }) do
+        coordinates = [lat: lat, lon: lon]
+        location = [location: [city: city,
+            street: street, housenumber: housenumber,
+            postcode: postcode, state: country]]
+        metadata = [type: "location", _id: UUID.uuid4()]
+        doc = metadata ++ coordinates ++ location
+        [index: doc]
 
-    coordinates = [{:lat, lat}, {:lon, lon}]
-    location = [{:location, [{:city, city}, {:country, country},
-          {:street, street}, {:housenumber, housenumber},
-          {:postcode, postcode}, {:state, state}]}]
-    Keyword.merge(coordinates, location)
-  end
-
-  defp filter_doc(_) do
-    []
+      _ ->
+        metadata = [type: "location", _id: UUID.uuid4()]
+        [index: metadata]
+    end
   end
 
   defp index_docs(docs) do
     docs
     # Discard not "pure" docs :)
-    |> Enum.filter(fn(x) -> Enum.count(x) != 2 end)
+    |> discard_unparsable_docs
     |> bulk_index
+  end
+
+  defp discard_unparsable_docs(docs) do
+    Enum.reject(docs, fn doc -> 
+     values = Keyword.get_values(doc, :index)
+     Enum.count(values) == 2
+    end)
   end
 
   defp bulk_index(docs) do
