@@ -46,7 +46,6 @@ defmodule ExAliceTest do
   end
 
   test "expect that the chunk is indexed and split correctly" do
-    chunk_number = 3
     indexing_prewarming
     |> index
     # wait for indexing time
