@@ -14,7 +14,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
     |> index_docs
   end
 
-  defp prepare_doc(docs) do
+  def prepare_doc(docs) do
     docs = List.flatten docs
     Stream.map(docs, fn doc ->
       filter_doc(doc)
