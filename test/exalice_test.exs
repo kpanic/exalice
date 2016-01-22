@@ -16,6 +16,7 @@ defmodule ExAliceTest do
     settings = Tirexs.ElasticSearch.config()
     Tirexs.ElasticSearch.delete(index_name, settings)
     Tirexs.ElasticSearch.put(index_name, settings)
+    Tirexs.Manage.refresh(Atom.to_string(index_name), settings)
     :ok
   end
 
@@ -48,10 +49,11 @@ defmodule ExAliceTest do
   test "expect that the chunk is indexed and split correctly" do
     indexing_prewarming
     |> index
-    # wait for indexing time
-    :timer.sleep 1000
 
+    settings = Tirexs.ElasticSearch.config()
     index_name = ExAlice.Geocoder.config(:index)
+
+    Tirexs.Manage.refresh(Atom.to_string(index_name), settings)
 
     query = search [index: index_name] do
               query do
