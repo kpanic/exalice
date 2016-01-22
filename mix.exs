@@ -4,7 +4,7 @@ defmodule ExAlice.Mixfile do
   def project do
     [app: :exalice,
      version: "0.0.1",
-     elixir: "~> 1.1",
+     elixir: "~> 1.2.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -35,7 +35,8 @@ defmodule ExAlice.Mixfile do
       {:towel, "~> 0.2"},
       {:uuid, "~> 1.1.1"},
       {:credo, "~> 0.1.9", only: [:dev, :test]},
-      {:tirexs, "~> 0.7.3"}
+      {:tirexs, "~> 0.7.4"}
+
     ]
   end
 end
