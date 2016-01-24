@@ -1,5 +1,10 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
+  import Tirexs.Mapping
+  import Tirexs.Index.Settings
+
+  require Tirexs.ElasticSearch
+
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
   def import(file \\ false) do
@@ -7,15 +12,49 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
       file = ExAlice.Geocoder.config(:file)
     end
 
+    index_name = ExAlice.Geocoder.config(:index)
+    doc_type = ExAlice.Geocoder.config(:doc_type)
+
+    bootstrap_index(index_name, doc_type)
+
     IO.puts "Importing...  #{file}"
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
 
     read_file(file)
     |> chunk(chunk_number)
-    |> json_decode
-    # TODO: Figure out how to Task.async nicely, without OOM killers
     |> index
+  end
+
+  def bootstrap_index(index_name, doc_type) do
+    index = [index: index_name, type: doc_type]
+    settings = Tirexs.ElasticSearch.config()
+
+    settings do
+      analysis do
+        analyzer "autocomplete_analyzer",
+          [
+            filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
+            tokenizer: "icu_tokenizer"
+          ]
+        filter "edge_ngram", [type: "edgeNGram", min_gram: 1, max_gram: 15]
+      end
+    end
+
+    mappings do
+      indexes "country", type: "string"
+      indexes "city", type: "string"
+      indexes "suburb", type: "string"
+      indexes "road", type: "string"
+      indexes "postcode", type: "string", index: "not_analyzed"
+      indexes "housenumber", type: "string", index: "not_analyzed"
+      indexes "coordinates", type: "geo_point"
+      indexes "full_address", type: "string"
+      indexes "_all", [enabled: "true"]
+      indexes "_ttl", [enabled: "true"]
+    end
+
+    Tirexs.ElasticSearch.put(index_name, JSX.encode!(index), settings)
   end
 
   def read_file(file) do
@@ -27,14 +66,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     Stream.chunk(data, chunk_number, chunk_number, [])
   end
 
-  def json_decode(chunks) do
-    Enum.map(chunks, fn chunk ->
-        chunk = String.strip(Enum.join(chunk, ","), ?,)
-        Poison.decode! "[" <> chunk <> "]"
-    end)
-  end
-
-  def index(chunks) do
-    Indexer.index chunks
+  def index(chunk) do
+    IO.puts "Indexing chunk..."
+    Indexer.index(chunk)
   end
 end
