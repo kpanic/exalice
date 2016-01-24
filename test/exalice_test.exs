@@ -5,8 +5,10 @@ defmodule ExAliceTest do
   require Tirexs.Query
   require Tirexs.ElasticSearch
 
+  import ExAlice.Geocoder.Providers.Elastic.Indexer, only: [
+    json_decode: 1]
   import ExAlice.Geocoder.Providers.Elastic.Importer, only: [
-    read_file: 1, json_decode: 1, index: 1, chunk: 2]
+    read_file: 1, index: 1, chunk: 2]
 
 
   doctest ExAlice
