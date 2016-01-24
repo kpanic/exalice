@@ -10,8 +10,19 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   def index(documents) do
     documents
+    |> json_decode
     |> prepare_doc
     |> index_docs
+  end
+
+  def json_decode(chunks) do
+    if not is_list(chunks) do
+        chunks = Enum.map(chunks, fn chunk ->
+            chunk = String.strip(Enum.join(chunk, ","), ?,)
+            Poison.decode! "[" <> chunk <> "]"
+        end)
+    end
+    chunks
   end
 
   def prepare_doc(docs) do
@@ -31,10 +42,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
           "addr:street" => street}
       } ->
 
+        full_address = Enum.join(
+          [country, city, street, postcode, housenumber], " ")
         coordinates = [lat: lat, lon: lon]
         location = [location: [city: city,
             street: street, housenumber: housenumber,
-            postcode: postcode, state: country]]
+            postcode: postcode, state: country,
+            full_address: full_address]]
         metadata = [type: "location", _id: UUID.uuid4()]
         doc = metadata ++ coordinates ++ location
         [index: doc]
@@ -45,10 +59,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
           housenumber: housenumber, state: state,
           postcode: postcode, street: street}} ->
 
+        full_address = Enum.join(
+          [country, city, street, postcode, housenumber, state], " ")
         coordinates = [lat: lat, lon: lon]
         location = [location: [city: city,
             street: street, housenumber: housenumber,
-            postcode: postcode, state: country]]
+            postcode: postcode, state: country,
+            full_address: full_address]]
         metadata = [type: "location", _id: UUID.uuid4()]
         doc = metadata ++ coordinates ++ location
         [index: doc]
