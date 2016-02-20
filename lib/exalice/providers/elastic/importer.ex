@@ -21,9 +21,16 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
 
-    read_file(file)
+    stream = file
+    |> File.stream!
     |> chunk(chunk_number)
-    |> index
+
+    ExAlice.StreamRunner.run(ExAlice.StreamRunner, stream, fn chunk ->
+      Indexer.index(chunk)
+    end)
+
+    {time, _} = :timer.tc(ExAlice.StreamRunner, :await, [ExAlice.StreamRunner])
+    IO.puts "Import completed in #{time / 1000} ms"
   end
 
   def bootstrap_index(index_name, doc_type) do
@@ -57,9 +64,9 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     Tirexs.ElasticSearch.put(index_name, JSX.encode!(index), settings)
   end
 
-  def read_file(file) do
+  def read(file) do
     File.stream!(file)
-    |> Enum.map(fn content -> String.split(content, "\n", trim: true) end)
+    |> Stream.map(&String.strip/1)
   end
 
   def chunk(data, chunk_number) do

@@ -9,6 +9,7 @@ defmodule Mix.Tasks.Exalice.Bootstrap do
   """
 
   def run(args) do
+    Mix.Task.run("app.start", [])
     # FIXME: works only with fixed argument
     cond do
       args == [] ->

@@ -9,6 +9,7 @@ defmodule ExAlice do
     children = [
       # Define workers and child supervisors to be supervised
       worker(ExAlice.Worker, []),
+      worker(ExAlice.StreamRunner, [4, [name: ExAlice.StreamRunner]])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
