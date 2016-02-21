@@ -16,13 +16,15 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   def json_decode(chunks) do
-    if not is_list(chunks) do
-        chunks = Enum.map(chunks, fn chunk ->
-            chunk = String.strip(Enum.join(chunk, ","), ?,)
-            Poison.decode! "[" <> chunk <> "]"
-        end)
+    if is_list(chunks) do
+      chunks = List.flatten(chunks)
+      Enum.map(chunks, fn chunk -> Poison.decode!(chunk) end)
+    else
+      Enum.map(chunks, fn chunk ->
+        chunk = String.strip(Enum.join(chunk, ","), ?,)
+        Poison.decode! "[" <> chunk <> "]"
+      end)
     end
-    chunks
   end
 
   def prepare_doc(docs) do
@@ -76,7 +78,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
     end
   end
 
-  defp index_docs(docs) do
+  def index_docs(docs) do
     docs
     # Discard not "pure" docs :)
     |> discard_unparsable_docs
@@ -84,7 +86,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp discard_unparsable_docs(docs) do
-    Enum.reject(docs, fn doc -> 
+    Enum.reject(docs, fn doc ->
      values = Keyword.get_values(doc, :index)
      Enum.count(values) == 2
     end)
