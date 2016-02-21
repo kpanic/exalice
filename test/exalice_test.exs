@@ -6,9 +6,9 @@ defmodule ExAliceTest do
   require Tirexs.ElasticSearch
 
   import ExAlice.Geocoder.Providers.Elastic.Indexer, only: [
-    json_decode: 1]
+    json_decode: 1, prepare_doc: 1, index_docs: 1]
   import ExAlice.Geocoder.Providers.Elastic.Importer, only: [
-    read_file: 1, index: 1, chunk: 2]
+    file_stream: 1, chunk: 2]
 
 
   doctest ExAlice
@@ -24,7 +24,7 @@ defmodule ExAliceTest do
 
   def indexing_prewarming(chunk_number \\ 10) do
     file = ExAlice.Geocoder.config(:file)
-    read_file(file)
+    file_stream(file)
     |> chunk(chunk_number)
     |> json_decode
   end
@@ -50,12 +50,13 @@ defmodule ExAliceTest do
 
   test "expect that the chunk is indexed and split correctly" do
     indexing_prewarming
-    |> index
+    |> prepare_doc
+    |> index_docs
 
     settings = Tirexs.ElasticSearch.config()
     index_name = ExAlice.Geocoder.config(:index)
 
-    Tirexs.Manage.refresh(Atom.to_string(index_name), settings)
+    Tirexs.Manage.refresh(to_string(index_name), settings)
 
     query = search [index: index_name] do
               query do
