@@ -1,6 +1,6 @@
 defmodule ExAlice.StreamRunner do
   use GenServer
-  defstruct workers: %{}, cont: nil, capacity: 8, fun: nil, reply_to: nil
+  defstruct workers: %{}, cont: nil, capacity: 4, fun: nil, reply_to: nil
 
   @moduledoc """
   Concurrently work through a stream.
