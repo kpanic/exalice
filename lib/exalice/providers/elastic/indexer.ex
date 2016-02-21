@@ -87,8 +87,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp discard_unparsable_docs(docs) do
     Enum.reject(docs, fn doc ->
-     values = Keyword.get_values(doc, :index)
-     Enum.count(values) == 2
+      values = Keyword.get_values(doc, :index)
+      Enum.count(List.flatten(values)) == 2
     end)
   end
 
