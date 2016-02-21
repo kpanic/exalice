@@ -16,14 +16,22 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   def json_decode(chunks) do
-    if is_list(chunks) do
-      chunks = List.flatten(chunks)
-      Enum.map(chunks, fn chunk -> Poison.decode!(chunk) end)
-    else
+
+    cond do
+      is_list(chunks) ->
+        chunks = List.flatten(chunks)
       Enum.map(chunks, fn chunk ->
-        chunk = String.strip(Enum.join(chunk, ","), ?,)
-        Poison.decode! "[" <> chunk <> "]"
+        if is_map(chunk) do
+          chunk
+        else
+          Poison.decode!(chunk)
+        end
       end)
+      true ->
+        Enum.map(chunks, fn chunk ->
+          chunk = String.strip(Enum.join(chunk, ","), ?,)
+          Poison.decode! "[" <> chunk <> "]"
+        end)
     end
   end
 
