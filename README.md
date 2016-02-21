@@ -34,7 +34,4 @@ To run the import:
 
 To geocode:
 
-    mix run -e "ExAlice.Geocoder.geocode(\"A Sunny Street, 2, Everywhere\")"
-
-NOTE: mappings in Elasticsearch are not yet present, results may vary after
-geocoding the first time :)
+    mix run -e "ExAlice.Geocoder.geocode(\"Via Recoaro 3, Broni\")"
