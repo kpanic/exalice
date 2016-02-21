@@ -48,6 +48,8 @@ defmodule ExAliceAcceptanceTest do
     result = Tirexs.Query.create_resource(query)
     result = Tirexs.Query.result(result, :hits)
 
+    assert not Enum.empty?(result)
+
     response_stored = ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
 
     assert not Enum.empty?(response_stored)
