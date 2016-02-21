@@ -5,7 +5,7 @@ defmodule ExAlice.Geocoder do
 
   def geocode(where) do
     location = Elastic.geocode(where)
-    if location == [] do
+    if Enum.empty?(location) do
       {:ok, location} = GoogleMaps.geocode(where)
       {:ok, 200, _} = Elastic.Indexer.index([location])
 
