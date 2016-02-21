@@ -16,7 +16,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
         end
       end
     end
-    IO.puts JSX.encode! locations
 
     result = Tirexs.Query.create_resource(locations)
 
