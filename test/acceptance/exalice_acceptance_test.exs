@@ -37,6 +37,7 @@ defmodule ExAliceAcceptanceTest do
 
     # Geocode and store in the storage
     ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
 
     # Check if exists in the storage
     query = search [index: @index_name] do
