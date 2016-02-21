@@ -48,6 +48,7 @@ defmodule ExAliceTest do
     assert Enum.count(res) == 1
   end
 
+  @tag :pending
   test "expect that the chunk is indexed and split correctly" do
     indexing_prewarming
     |> prepare_doc
