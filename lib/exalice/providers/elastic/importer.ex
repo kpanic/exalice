@@ -22,7 +22,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     chunk_number = ExAlice.Geocoder.config(:chunks)
 
     stream = file
-    |> stream
+    |> file_stream
     |> chunk(chunk_number)
 
     ExAlice.StreamRunner.run(ExAlice.StreamRunner, stream, fn chunk ->
@@ -64,17 +64,12 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     Tirexs.ElasticSearch.put(index_name, JSX.encode!(index), settings)
   end
 
-  def stream(file) do
+  def file_stream(file) do
     File.stream!(file)
     |> Stream.map(&String.strip/1)
   end
 
   def chunk(data, chunk_number) do
     Stream.chunk(data, chunk_number, chunk_number, [])
-  end
-
-  def index(chunk) do
-    IO.puts "Indexing chunk..."
-    Indexer.index(chunk)
   end
 end
