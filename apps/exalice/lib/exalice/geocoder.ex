@@ -1,16 +1,21 @@
 defmodule ExAlice.Geocoder do
+  @behaviour Storage
+
   use HTTPoison.Base
-  alias ExAlice.Geocoder.Providers.Elastic, as: Elastic
-  alias ExAlice.Geocoder.Providers.GoogleMaps, as: GoogleMaps
 
-  def geocode(where) do
-    location = Elastic.geocode(where)
-    if Enum.empty?(location) do
-      {:ok, location} = GoogleMaps.geocode(where)
-      {:ok, 200, _} = Elastic.Indexer.index([location])
-
+  def geocode(storage \\ ExAlice.Geocoder.config(:provider),
+              geocoder \\ ExAlice.Geocoder.config(:geocoder),
+              where) do
+    address = storage.geocode(where)
+    if Enum.empty?(address) do
+      {:ok, address} = geocoder.geocode(where)
+      {:ok, 200, _} = store(storage, [address])
     end
-    location
+    address
+  end
+
+  def store(storage, address) do
+    storage.index([address])
   end
 
   def config(key, app \\ :exalice, default \\ nil) do
