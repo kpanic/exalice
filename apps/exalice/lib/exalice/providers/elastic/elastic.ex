@@ -3,6 +3,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
   require Tirexs.Query
 
+  alias ExAlice.Geocoder.Providers.Elastic.Indexer
+
   @index ExAlice.Geocoder.config(:index)
 
   def geocode(address) do
@@ -22,5 +24,9 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
     Tirexs.Query.result(result, :hits)
     |> Enum.map(fn item -> Map.get(item, :_source) end)
+  end
+
+  def index(data) when is_list(data) do
+    Indexer.index(data)
   end
 end
