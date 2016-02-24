@@ -8,16 +8,9 @@ defmodule Mix.Tasks.Exalice.Bootstrap do
   data
   """
 
-  def run(args) do
+  def run(_) do
     Mix.Task.run("app.start", [])
     # FIXME: works only with fixed argument
-    cond do
-      args == [] ->
-        ExAlice.Geocoder.Providers.Elastic.Importer.import
-      args = [] ->
-        ExAlice.Geocoder.Providers.Elastic.Importer.import(args)
-      true ->
-        IO.puts "ExAlice: Invalid argument"
-    end
+    ExAlice.Geocoder.Providers.Elastic.Importer.import
   end
 end

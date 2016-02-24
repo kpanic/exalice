@@ -1,6 +1,6 @@
 # ExAlice
 
-**WARNING: this is just one of my elixir playground, play with it at your own RISK! It might break your IoT devices! ;)**
+**WARNING: This is alpha software, do not use in production!**
 
 ## Installation
 
@@ -18,20 +18,15 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:exalice]]
         end
 
-  3. Ensure that Elasticsearch is running
+  3. Ensure that Elasticsearch 2.2.x is running
 
-Run these commands:
+  4. To run the import:
 
-    curl -XDELETE localhost:9200/exalice/?refresh=true
-
-    curl -XPOST localhost:9200/exalice?refresh=true -d '{ "index" : { "refresh_interval" : "-1" } }'
-
-To run the import:
-
-    mix exalice.bootstrap # with sample data
-
-    mix run -e "ExAlice.Geocoder.Providers.Elastic.Importer.import(\"world-streets-full.json\")" # with your data
+        mix exalice.bootstrap # Populate the storage with sample data in this repository
 
 To geocode:
 
     mix run -e "ExAlice.Geocoder.geocode(\"Via Recoaro 3, Broni\")"
+
+**NOTE**: At the moment the geocoder relies on google maps and there's no
+possibility to use a google maps api key.
