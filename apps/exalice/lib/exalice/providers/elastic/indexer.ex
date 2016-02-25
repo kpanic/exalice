@@ -2,8 +2,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   import Tirexs.Bulk
   require Tirexs.ElasticSearch
 
-  @settings Tirexs.ElasticSearch.config()
-
   @index_name ExAlice.Geocoder.config(:index)
 
   def index(documents) do
@@ -99,6 +97,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp bulk_index(docs) do
-    Tirexs.Bulk.store [index: @index_name, refresh: false], @settings, do: docs
+    settings = Tirexs.ElasticSearch.config()
+    Tirexs.Bulk.store [index: @index_name, refresh: false], settings, do: docs
   end
 end
