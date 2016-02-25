@@ -3,7 +3,7 @@ defmodule ExAlice.Mixfile do
 
   def project do
     [app: :exalice,
-     version: "0.0.1",
+     version: "0.0.1-alpha",
      build_path: "../../_build",
      config_path: "../../config/config.exs",
      deps_path: "../../deps",
