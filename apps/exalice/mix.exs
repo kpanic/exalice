@@ -22,11 +22,11 @@ defmodule ExAlice.Mixfile do
 
   defp deps do
     [
-      {:poison, "~> 1.5.0"},
+      {:poison, "~> 2.1.0"},
       {:httpoison, "~> 0.8"},
       {:hackney, "~> 1.4.4", [optional: false, hex: :hackney, override: true]},
       {:towel, "~> 0.2"},
-      {:tirexs, "~> 0.7.4"}
+      {:tirexs, "~> 0.7.6"}
     ]
   end
 end
