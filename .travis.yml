@@ -1,7 +1,8 @@
-sudo: false
+sudo: required
 language: elixir
 elixir:
-  - 1.2.1
-services:
-  - elasticsearch
+  - 1.2.0
+before_install:
+  - curl -L -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.2.0.deb && sudo dpkg -i --force-confnew elasticsearch-2.2.0.deb
+  - sudo service elasticsearch start
 script: "mix test --exclude pending:true"
