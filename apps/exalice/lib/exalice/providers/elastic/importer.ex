@@ -35,7 +35,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
   def bootstrap_index(index_name, doc_type) do
     index = [index: index_name, type: doc_type]
-    settings = Tirexs.ElasticSearch.config()
+    config = Tirexs.ElasticSearch.config()
 
     settings do
       analysis do
@@ -61,7 +61,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
       indexes "_ttl", [enabled: "true"]
     end
 
-    Tirexs.ElasticSearch.put(index_name, JSX.encode!(index), settings)
+    Tirexs.ElasticSearch.put(index_name, JSX.encode!(index), config)
   end
 
   def file_stream(file) do
