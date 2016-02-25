@@ -4,8 +4,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   @settings Tirexs.ElasticSearch.config()
 
-  require UUID
-
   @index_name ExAlice.Geocoder.config(:index)
 
   def index(documents) do
@@ -59,7 +57,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
             street: street, housenumber: housenumber,
             postcode: postcode, state: country,
             full_address: full_address]]
-        metadata = [type: "location", _id: UUID.uuid4()]
+        metadata = [type: "location"]
         doc = metadata ++ coordinates ++ location
         [index: doc]
 
@@ -76,12 +74,12 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
             street: street, housenumber: housenumber,
             postcode: postcode, state: country,
             full_address: full_address]]
-        metadata = [type: "location", _id: UUID.uuid4()]
+        metadata = [type: "location"]
         doc = metadata ++ coordinates ++ location
         [index: doc]
 
       _ ->
-        metadata = [type: "location", _id: UUID.uuid4()]
+        metadata = [type: "location"]
         [index: metadata]
     end
   end
@@ -96,7 +94,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   defp discard_unparsable_docs(docs) do
     Enum.reject(docs, fn doc ->
       values = Keyword.get_values(doc, :index)
-      Enum.count(List.flatten(values)) == 2
+      Enum.count(List.flatten(values)) == 1
     end)
   end
 
