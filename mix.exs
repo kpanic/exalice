@@ -5,6 +5,8 @@ defmodule ExAlice.Mixfile do
     [app: :exalice,
      version: "0.0.1-alpha",
      elixir: "~> 1.2",
+     description: description,
+     package: package,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -23,6 +25,23 @@ defmodule ExAlice.Mixfile do
       {:hackney, "~> 1.4.4", [optional: false, hex: :hackney, override: true]},
       {:towel, "~> 0.2"},
       {:tirexs, "~> 0.7.6"}
+    ]
+  end
+
+  defp description do
+    """
+    ExAlice, a geocoder with swappable storage
+    """
+  end
+
+  defp package do
+	  [
+      files: ["apps", "config", "data", "LICENSE", "mix.exs", "README.md"],
+      maintainers: ["Marco Milanesi"],
+      licenses: ["Apache 2.0"],
+      links: %{"GitHub" => "https://github.com/kpanic/exalice",
+               "Contributors" => "https://github.com/kpanic/exalice/graphs/contributors",
+               "Issues" => "https://github.com/kpanic/exalice/issues"}
     ]
   end
 end
