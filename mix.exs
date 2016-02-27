@@ -22,7 +22,6 @@ defmodule ExAlice.Mixfile do
     [
       {:poison, "~> 2.1.0"},
       {:httpoison, "~> 0.8"},
-      {:hackney, "~> 1.4.4", [optional: false, hex: :hackney, override: true]},
       {:towel, "~> 0.2"},
       {:tirexs, "~> 0.7.6"}
     ]
