@@ -29,11 +29,43 @@ defmodule ExAliceAcceptanceTest do
     |> json_decode
   end
 
-  test "expects that data is indexed" do
+  test "expects that data is indexed with the openstreetmap geocoder" do
     indexing_prewarming
     |> Indexer.index
 
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
+
+    # Geocode and store in the storage
+    ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    # Check if exists in the storage
+    query = search [index: @index_name] do
+      query do
+        string "Via Recoaro"
+      end
+    end
+
+    result = Tirexs.Query.create_resource(query)
+    result = Tirexs.Query.result(result, :hits)
+
+    assert not Enum.empty?(result)
+
+    response_stored = ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
+
+    assert not Enum.empty?(response_stored)
+  end
+
+
+  test "expects that data is indexed with the google maps geocoder" do
+    indexing_prewarming
+    |> Indexer.index
+
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.GoogleMaps)
 
     # Geocode and store in the storage
     ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
