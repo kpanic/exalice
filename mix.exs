@@ -3,7 +3,7 @@ defmodule ExAlice.Mixfile do
 
   def project do
     [app: :exalice,
-     version: "0.0.1-alpha",
+     version: "0.0.2-alpha",
      elixir: "~> 1.2",
      description: description,
      package: package,
