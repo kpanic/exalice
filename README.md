@@ -1,5 +1,7 @@
 # ExAlice
 
+[![Build Status](https://travis-ci.org/kpanic/exalice.svg?branch=master)](https://travis-ci.org/kpanic/exalice)
+
 **WARNING: This is alpha software, do not use in production!**
 
 ## Installation of exalice from this repository
