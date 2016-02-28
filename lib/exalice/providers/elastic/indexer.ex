@@ -12,17 +12,16 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   def json_decode(chunks) do
-
     cond do
       is_list(chunks) ->
-        chunks = List.flatten(chunks)
-      Enum.map(chunks, fn chunk ->
-        if is_map(chunk) do
-          chunk
-        else
-          Poison.decode!(chunk)
-        end
-      end)
+        Enum.map(chunks, fn chunk ->
+          if is_map(chunk) do
+            chunk
+          else
+            Poison.decode!(chunk)
+          end
+        end)
+
       true ->
         Enum.map(chunks, fn chunk ->
           chunk = String.strip(Enum.join(chunk, ","), ?,)
@@ -32,7 +31,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   def prepare_doc(docs) do
-    docs = List.flatten docs
     Stream.map(docs, fn doc ->
       filter_doc(doc)
     end)
@@ -45,36 +43,24 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
         "tags" =>
         %{"addr:city" => city, "addr:country" => country,
           "addr:housenumber" => housenumber, "addr:postcode" => postcode,
-          "addr:street" => street}
-      } ->
+          "addr:street" => street}} ->
 
-        full_address = Enum.join(
-          [country, city, street, postcode, housenumber], " ")
-        coordinates = [lat: lat, lon: lon]
-        location = [location: [city: city,
-            street: street, housenumber: housenumber,
-            postcode: postcode, state: country,
-            full_address: full_address]]
-        metadata = [type: "location"]
-        doc = metadata ++ coordinates ++ location
-        [index: doc]
+            full_address = Enum.join(
+              [country, city, street, postcode, housenumber], " ")
+            coordinates = [lat: lat, lon: lon]
+            location = [full_address: full_address]
+            metadata = [type: "location"]
+            doc = metadata ++ coordinates ++ location
+            [index: doc]
 
       # geocoder format
       %{lat: lat, lon: lon,
-        location: %{city: city, country: country,
-          housenumber: housenumber, state: state,
-          postcode: postcode, street: street}} ->
-
-        full_address = Enum.join(
-          [country, city, street, postcode, housenumber, state], " ")
-        coordinates = [lat: lat, lon: lon]
-        location = [location: [city: city,
-            street: street, housenumber: housenumber,
-            postcode: postcode, state: country,
-            full_address: full_address]]
-        metadata = [type: "location"]
-        doc = metadata ++ coordinates ++ location
-        [index: doc]
+        full_address: full_address} ->
+          coordinates = [lat: lat, lon: lon]
+          location = [full_address: full_address]
+          metadata = [type: "location"]
+          doc = metadata ++ coordinates ++ location
+          [index: doc]
 
       _ ->
         metadata = [type: "location"]
@@ -90,9 +76,9 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp discard_unparsable_docs(docs) do
-    Enum.reject(docs, fn doc ->
+    docs = Enum.reject(docs, fn doc ->
       values = Keyword.get_values(doc, :index)
-      Enum.count(List.flatten(values)) == 1
+      Enum.count(List.first(values)) == 1
     end)
   end
 
