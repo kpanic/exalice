@@ -53,7 +53,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
             doc = metadata ++ coordinates ++ location
             [index: doc]
 
-      # geocoder format
+      # openstreetmap geocoder format
       %{lat: lat, lon: lon,
         full_address: full_address} ->
           coordinates = [lat: lat, lon: lon]
@@ -61,6 +61,20 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
           metadata = [type: "location"]
           doc = metadata ++ coordinates ++ location
           [index: doc]
+
+      # google maps format
+      %{lat: lat,
+        location: %{city: city, country: country, housenumber: housenumber,
+                    postcode: postcode, state: region, street: street},
+         lon: lon} ->
+
+        full_address = Enum.join(
+          [country, city, street, postcode, housenumber], " ")
+        coordinates = [lat: lat, lon: lon]
+        location = [full_address: full_address]
+        metadata = [type: "location"]
+        doc = metadata ++ coordinates ++ location
+        [index: doc]
 
       _ ->
         metadata = [type: "location"]
