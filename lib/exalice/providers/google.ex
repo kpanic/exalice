@@ -7,15 +7,10 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
 
   @endpoint "https://maps.googleapis.com/"
 
-  def geocode(address) when is_binary(address) do
-    request("maps/api/geocode/json", address: address)
-    |> fmap(&parse_geocode/1)
-  end
-
-  # add by kp
   def geocode(address) do
-    request("maps/api/geocode/json", address: address)
+    {:ok, response} = request("maps/api/geocode/json", address: address)
     |> fmap(&parse_geocode/1)
+    [response]
   end
 
   defp parse_geocode(response) do
