@@ -8,9 +8,10 @@
 
   2. Ensure that the analysis-icu plugin is installed:
 
+        # On Debian based systems
         sudo /usr/share/elasticsearch/bin/plugin install analysis-icu
 
-    The path might vary between different operating systems
+    The path of the `plugin` command varies between different operating systems
 
   3. Ensure that Elasticsearch is started
 
@@ -47,12 +48,16 @@
 ```
     config :exalice,
           provider: ExAlice.Geocoder.Providers.Elastic,
-          geocoder: ExAlice.Geocoder.Providers.GoogleMaps,
+          geocoder: ExAlice.Geocoder.Providers.OpenStreetMap,
           index: :exalice,
           doc_type: :location,
           file: "data/germany-streets.json",
           chunks: 5000
 ```
+
+    The available options for the `geocoder:` are
+    ExAlice.Geocoder.Providers.GoogleMaps or
+    ExAlice.Geocoder.Providers.OpenStreetMap
 
   7. (optional) Put a json file generated with [pbf2json](https://github.com/pelias/pbf2json) from openstreetmap pbf(s) in your `data/` folder
 
@@ -68,9 +73,10 @@
 
   2. Type `ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")`
 
-  3. You should receive back data from google maps
+  3. You should receive back data from the configured geocoder provider
+     (OpenStreetMap or Google Maps)
 
-  4. If you run again `ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")` you should receive back data from the storage (no google maps lookup)
+  4. If you run again `ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")` you should receive back data from the storage (no external lookup)
 
-**NOTE**: At the moment the geocoder relies on google maps and there's no
+**NOTE**: At the moment the geocoder part that relies on google maps has no
 possibility to use a google maps api key.
