@@ -8,14 +8,14 @@ defmodule ExAlice.Geocoder do
               where) do
     address = storage.geocode(where)
     if Enum.empty?(address) do
-      {:ok, address} = geocoder.geocode(where)
-      {:ok, 200, _} = store(storage, [address])
+      address = geocoder.geocode(where)
+      {:ok, 200, _} = store(storage, address)
     end
     address
   end
 
   def store(storage, address) do
-    storage.index([address])
+    storage.index(address)
   end
 
   def config(key, app \\ :exalice, default \\ nil) do

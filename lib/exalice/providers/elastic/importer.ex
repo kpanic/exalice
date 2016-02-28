@@ -49,15 +49,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     end
 
     mappings do
-      indexes "country", type: "string"
-      indexes "city", type: "string"
-      indexes "suburb", type: "string"
-      indexes "road", type: "string"
-      indexes "postcode", type: "string", index: "not_analyzed"
-      indexes "housenumber", type: "string", index: "not_analyzed"
       indexes "coordinates", type: "geo_point"
       indexes "full_address", type: "string"
-      indexes "_all", [enabled: "true"]
       indexes "_ttl", [enabled: "true"]
     end
 
