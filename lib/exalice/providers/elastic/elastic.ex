@@ -5,10 +5,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
-  @index ExAlice.Geocoder.config(:index)
 
   def geocode(address) do
-    locations = search [index: @index] do
+    index = ExAlice.Geocoder.config(:index)
+    locations = search [index: index] do
       query do
         filtered do
           query do
