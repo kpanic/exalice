@@ -1,12 +1,12 @@
 defmodule ExAliceAcceptanceTest do
   use ExUnit.Case
 
-  import Tirexs.Search
   require Tirexs.Query
   require Tirexs.ElasticSearch
 
   @index_name ExAlice.Geocoder.config(:index)
   @settings Tirexs.ElasticSearch.config()
+  @storage ExAlice.Geocoder.config(:provider)
 
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
@@ -42,14 +42,7 @@ defmodule ExAliceAcceptanceTest do
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
 
     # Check if exists in the storage
-    query = search [index: @index_name] do
-      query do
-        string "Via Recoaro"
-      end
-    end
-
-    result = Tirexs.Query.create_resource(query)
-    result = Tirexs.Query.result(result, :hits)
+    result = @storage.geocode("Via Recoaro")
 
     assert not Enum.empty?(result)
 
@@ -71,15 +64,7 @@ defmodule ExAliceAcceptanceTest do
     ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
 
-    # Check if exists in the storage
-    query = search [index: @index_name] do
-      query do
-        string "Via Recoaro"
-      end
-    end
-
-    result = Tirexs.Query.create_resource(query)
-    result = Tirexs.Query.result(result, :hits)
+    result = @storage.geocode("Via Recoaro")
 
     assert not Enum.empty?(result)
 
