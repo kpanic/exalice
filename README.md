@@ -78,7 +78,7 @@
   3. You should receive back data from the configured geocoder provider
      (OpenStreetMap or Google Maps)
 
-  4. If you run again `ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")` you should receive back data from the storage (no external lookup)
+  4. If you run again `ExAlice.Geocoder.geocode("Via Recoaro, Broni")` you should receive back data from the storage (no external lookup)
 
 **NOTE**: At the moment the geocoder part that relies on google maps has no
 possibility to use a google maps api key.
