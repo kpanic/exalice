@@ -26,7 +26,7 @@
   1. Add exalice to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:exalice, "~> 0.0.3-alpha"}]
+          [{:exalice, "~> 0.0.4-alpha"}]
         end
 
   2. Ensure exalice is started before your application:
