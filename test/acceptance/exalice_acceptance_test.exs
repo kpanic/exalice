@@ -15,10 +15,12 @@ defmodule ExAliceAcceptanceTest do
 
   doctest ExAlice
 
-  def setup_all do
+  def setup do
     Tirexs.ElasticSearch.delete(@index_name, @settings)
-    Tirexs.ElasticSearch.put(@index_name, @settings)
-    Tirexs.Manage.refresh(Atom.to_string(@index_name), @settings)
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    Tirexs.ElasticSearch.post(@index_name, @settings)
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
     :ok
   end
 
@@ -27,13 +29,13 @@ defmodule ExAliceAcceptanceTest do
     file_stream(file)
     |> Enum.take(10)
     |> json_decode
-  end
-
-  test "expects that data is indexed with the openstreetmap geocoder" do
-    indexing_prewarming
     |> Indexer.index
 
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
+  end
+
+  test "expects that data is indexed with the openstreetmap geocoder" do
+    indexing_prewarming()
 
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
 
@@ -53,10 +55,7 @@ defmodule ExAliceAcceptanceTest do
 
 
   test "expects that data is indexed with the google maps geocoder" do
-    indexing_prewarming
-    |> Indexer.index
-
-    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+    indexing_prewarming()
 
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.GoogleMaps)
 
@@ -71,5 +70,54 @@ defmodule ExAliceAcceptanceTest do
     response_stored = ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
 
     assert not Enum.empty?(response_stored)
+  end
+
+  test "expects empty list when geocoding an empty string" do
+    indexing_prewarming()
+
+    Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
+
+    result = ExAlice.Geocoder.geocode("")
+    assert Enum.empty?(result)
+  end
+
+  test "expects that a truncated address (or part of it), matches an entry in the storage" do
+    indexing_prewarming()
+
+    Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
+
+    ExAlice.Geocoder.geocode("Via Recoaro, Broni")
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    result = @storage.geocode("Recoar")
+    assert not Enum.empty?(result)
+  end
+
+  # FIXME: OSM does not interpolate for every OSM address At some point we
+  #        should strip the numbers in the case of openstreetmap when geocoding
+  #        with the storage
+  test "expects that an address with a number in OSM, does not matches an entry in the storage" do
+    indexing_prewarming()
+
+    Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
+
+    ExAlice.Geocoder.geocode("Via Emilia 3, Broni")
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    result = @storage.geocode("Via Emilia 3")
+    assert Enum.empty?(result)
+  end
+
+  test "expects that an address with a number in Google Maps, matches an entry in the storage" do
+    indexing_prewarming()
+
+    Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.GoogleMaps)
+
+    ExAlice.Geocoder.geocode("Via Parini 3, Broni")
+    Tirexs.Manage.refresh(to_string(@index_name), @settings)
+
+    result = @storage.geocode("Via Parini, 3")
+
+    assert not Enum.empty?(result)
   end
 end
