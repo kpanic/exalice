@@ -37,7 +37,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp filter_doc(doc) do
     case doc do
-      # openstreetmap format
+      # openstreetmap format without centroid
       %{"lat" => lat, "lon" => lon,
         "tags" =>
         %{"addr:city" => city, "addr:country" => country,
@@ -51,6 +51,22 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
             metadata = [type: "location"]
             doc = metadata ++ coordinates ++ location
             [index: doc]
+
+
+      # openstreetmap format with centroid
+      %{"centroid" => %{"lat" => lat, "lon" => lon},
+        "tags" =>
+          %{"addr:city" => city, "addr:country" => country,
+            "addr:housenumber" => housenumber, "addr:postcode" => postcode,
+              "addr:street" => street}} ->
+
+          full_address = Enum.join(
+            [country, city, street, postcode, housenumber], " ")
+          coordinates = [lat: lat, lon: lon]
+          location = [full_address: full_address]
+          metadata = [type: "location"]
+          doc = metadata ++ coordinates ++ location
+          [index: doc]
 
       # openstreetmap geocoder format
       %{lat: lat, lon: lon,
@@ -89,7 +105,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp discard_unparsable_docs(docs) do
-    docs = Enum.reject(docs, fn doc ->
+    Enum.reject(docs, fn doc ->
       values = Keyword.get_values(doc, :index)
       Enum.count(List.first(values)) == 1
     end)
@@ -99,6 +115,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
     settings = Tirexs.ElasticSearch.config()
     index_name = ExAlice.Geocoder.config(:index)
 
-    Tirexs.Bulk.store [index: index_name, refresh: false], settings, do: docs
+    unless Enum.empty?(docs) do
+      Tirexs.Bulk.store [index: index_name, refresh: false], settings, do: docs
+    end
   end
 end
