@@ -13,7 +13,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
         filtered do
           query do
           match "full_address", address,
-          [operator: "and", type: "phrase_prefix"]
+          [operator: "and"]
           end
         end
       end
