@@ -63,7 +63,7 @@ defmodule ExAliceAcceptanceTest do
     ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
 
-    result = @storage.geocode("Via Recoaro")
+    result = @storage.geocode("Via Recoaro 3, Broni")
 
     assert not Enum.empty?(result)
 
@@ -81,7 +81,7 @@ defmodule ExAliceAcceptanceTest do
     assert Enum.empty?(result)
   end
 
-  test "expects that a truncated address (or part of it), matches an entry in the storage" do
+  test "expects that a truncated address (or part of it), does not match an entry in the storage" do
     indexing_prewarming()
 
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
@@ -90,7 +90,7 @@ defmodule ExAliceAcceptanceTest do
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
 
     result = @storage.geocode("Recoar")
-    assert not Enum.empty?(result)
+    assert Enum.empty?(result)
   end
 
   # FIXME: OSM does not interpolate for every OSM address At some point we
