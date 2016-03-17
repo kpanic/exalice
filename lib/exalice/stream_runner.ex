@@ -1,6 +1,9 @@
 defmodule ExAlice.StreamRunner do
   use GenServer
-  defstruct workers: %{}, cont: nil, capacity: 4, fun: nil, reply_to: nil
+
+  @capacity ExAlice.Geocoder.config(:capacity) || :erlang.system_info(:logical_processors)
+
+  defstruct workers: %{}, cont: nil, capacity: @capacity, fun: nil, reply_to: nil
 
   @moduledoc """
   Concurrently work through a stream.
