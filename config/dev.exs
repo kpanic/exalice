@@ -4,5 +4,5 @@ config :exalice,
   index: :exalice,
   doc_type: :location,
   capacity: 4,
-  file: "data/germany-streets-full.json",
+  file: "data/germany-streets.json",
   chunks: 5000
