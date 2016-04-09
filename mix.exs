@@ -3,7 +3,7 @@ defmodule ExAlice.Mixfile do
 
   def project do
     [app: :exalice,
-     version: "0.0.5-alpha",
+     version: "0.0.6-alpha",
      elixir: "~> 1.2",
      description: description,
      package: package,
@@ -34,7 +34,7 @@ defmodule ExAlice.Mixfile do
 
   defp package do
 	  [
-      files: ["config", "data", "lib", "LICENSE", "mix.exs", "mix.lock", "README.md"],
+      files: ["config", "data/germany-streets.json", "data/test-data.json", "lib", "LICENSE", "mix.exs", "mix.lock", "README.md"],
       maintainers: ["Marco Milanesi"],
       licenses: ["Apache 2.0"],
       links: %{"GitHub" => "https://github.com/kpanic/exalice",
