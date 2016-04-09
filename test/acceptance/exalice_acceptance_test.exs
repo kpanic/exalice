@@ -40,15 +40,15 @@ defmodule ExAliceAcceptanceTest do
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.OpenStreetMap)
 
     # Geocode and store in the storage
-    ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
+    ExAlice.Geocoder.geocode("Via Gazzaniga 26, Broni")
     Tirexs.Manage.refresh(to_string(@index_name), @settings)
 
     # Check if exists in the storage
-    result = @storage.geocode("Via Recoaro")
+    result = @storage.geocode("Via Gazzaniga")
 
     assert not Enum.empty?(result)
 
-    response_stored = ExAlice.Geocoder.geocode("Via Recoaro 3, Broni")
+    response_stored = ExAlice.Geocoder.geocode("Via Gazzaniga 26, Broni")
 
     assert not Enum.empty?(response_stored)
   end
