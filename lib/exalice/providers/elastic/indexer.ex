@@ -98,7 +98,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   def index_docs(docs) do
     docs
-    |> Enum.into([])
     # Discard not "pure" docs :)
     |> discard_unparsable_docs
     |> bulk_index
@@ -113,9 +112,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp bulk_index(docs) do
     index_name = ExAlice.Geocoder.config(:index)
+    doc_type = ExAlice.Geocoder.config(:doc_type)
 
     payload = Tirexs.Bulk.bulk do
-      Tirexs.Bulk.index [index: index_name, type: "location"], docs
+      Tirexs.Bulk.index [index: index_name, type: doc_type], docs
     end
 
     unless Enum.empty?(docs) do
