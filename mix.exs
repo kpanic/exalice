@@ -22,7 +22,7 @@ defmodule ExAlice.Mixfile do
     [
       {:poison, "~> 2.1.0"},
       {:httpoison, "~> 0.8"},
-      {:tirexs, "~> 0.7.6"}
+      {:tirexs, "~> 0.8.7"}
     ]
   end
 
