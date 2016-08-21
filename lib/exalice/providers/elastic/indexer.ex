@@ -1,6 +1,9 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   import Tirexs.Bulk
 
+  @index_name ExAlice.Geocoder.config(:index)
+  @doc_type ExAlice.Geocoder.config(:doc_type)
+
   def index(documents) do
     documents
     |> json_decode
@@ -45,7 +48,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
           [country, city, street, postcode, housenumber], " ")
         coordinates = [lat: lat, lon: lon]
         location = [full_address: full_address]
-        metadata = [type: "location"]
+        metadata = [type: @doc_type]
         doc = metadata ++ coordinates ++ location
         [index: doc]
 
@@ -61,7 +64,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
             [country, city, street, postcode, housenumber], " ")
           coordinates = [lat: lat, lon: lon]
           location = [full_address: full_address]
-          metadata = [type: "location"]
+          metadata = [type: @doc_type]
           doc = metadata ++ coordinates ++ location
           [index: doc]
 
@@ -70,7 +73,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
           coordinates = [lat: lat, lon: lon]
           location = [full_address: full_address]
-          metadata = [type: "location"]
+          metadata = [type: @doc_type]
           doc = metadata ++ coordinates ++ location
           [index: doc]
 
@@ -86,12 +89,12 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
           [country, city, street, postcode, housenumber], " ")
         coordinates = [lat: lat, lon: lon]
         location = [full_address: full_address]
-        metadata = [type: "location"]
+        metadata = [type: @doc_type]
         doc = metadata ++ coordinates ++ location
         [index: doc]
 
       _ ->
-        metadata = [type: "location"]
+        metadata = [type: @doc_type]
         [index: metadata]
     end
   end
@@ -111,11 +114,9 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp bulk_index(docs) do
-    index_name = ExAlice.Geocoder.config(:index)
-    doc_type = ExAlice.Geocoder.config(:doc_type)
 
     payload = Tirexs.Bulk.bulk do
-      Tirexs.Bulk.index [index: index_name, type: doc_type], docs
+      Tirexs.Bulk.index [index: @index_name, type: @doc_type], docs
     end
 
     unless Enum.empty?(docs) do
