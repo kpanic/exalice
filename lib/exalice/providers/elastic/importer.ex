@@ -3,8 +3,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   import Tirexs.Mapping
   import Tirexs.Index.Settings
 
-  require Tirexs.ElasticSearch
-
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
   def import(file \\ false) do
@@ -35,7 +33,6 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
   def bootstrap_index(index_name, doc_type) do
     index = [index: index_name, type: doc_type]
-    config = Tirexs.ElasticSearch.config()
 
     settings do
       analysis do
@@ -50,11 +47,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
     mappings do
       indexes "coordinates", type: "geo_point"
-      indexes "full_address", type: "string"
-      indexes "_ttl", [enabled: "true"]
+      indexes "full_address", type: "string", analyzer: "autocomplete_analyzer"
     end
 
-    Tirexs.ElasticSearch.put(index_name, JSX.encode!(index), config)
+    Tirexs.Mapping.create_resource(index)
   end
 
   def file_stream(file) do

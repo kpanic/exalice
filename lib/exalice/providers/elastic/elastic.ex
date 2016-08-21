@@ -8,21 +8,21 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
   def geocode(address) do
     index = ExAlice.Geocoder.config(:index)
+
     locations = search [index: index] do
       query do
         filtered do
           query do
-          match "full_address", address,
+          match "index.full_address", address,
           [operator: "and"]
           end
         end
       end
     end
 
-    result = Tirexs.Query.create_resource(locations)
+    {:ok, 200, %{hits: hits}} = Tirexs.Query.create_resource(locations)
 
-
-    Tirexs.Query.result(result, :hits)
+    Map.get(hits, :hits)
     |> Enum.map(fn item -> Map.get(item, :_source) end)
   end
 

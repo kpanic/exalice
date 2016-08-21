@@ -14,7 +14,7 @@ defmodule ExAlice.Geocoder do
     case Enum.empty?(address) do
       true ->
         address = geocoder.geocode(where)
-        {:ok, 200, something} = store(storage, address)
+        {:ok, 200, _} = store(storage, address)
         address
       _ ->
         address
