@@ -22,10 +22,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     IO.puts "Importing...  #{file}"
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
-    file
+    chunked_stream = file
     |> file_stream()
     |> chunk(chunk_number)
-    |> spawn_workers_from_stream()
+
+    {time, _} = :timer.tc(fn -> spawn_workers_from_stream(chunked_stream) end, [])
+    IO.puts "Import completed in #{time / 1000} ms"
+
 
   end
 
