@@ -8,9 +8,9 @@ defmodule ExAliceAcceptanceTest do
   require Tirexs.Query
   import Tirexs.Resources.Indices
   import Tirexs.Search
-  alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
-  import ExAlice.Geocoder.Providers.Elastic.Importer, only: [file_stream: 1, bootstrap_index: 2]
+  import ExAlice.Geocoder.Providers.Elastic.Importer, only: [
+    file_stream: 1, bootstrap_index: 2, spawn_workers_from_stream: 1]
 
   doctest ExAlice
 
@@ -97,7 +97,8 @@ defmodule ExAliceAcceptanceTest do
   test "expect that the chunk is indexed and split correctly" do
     file = ExAlice.Geocoder.config(:file)
     file_stream(file)
-    |> Indexer.index
+    |> spawn_workers_from_stream
+
     Tirexs.Resources.bump._refresh(@index_name)
 
     query = search [index: @index_name] do
