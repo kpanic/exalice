@@ -4,7 +4,7 @@ defmodule ExAlice.Mixfile do
   def project do
     [app: :exalice,
      version: "0.0.6-alpha",
-     elixir: "~> 1.2",
+     elixir: "~> 1.3",
      description: description,
      package: package,
      build_embedded: Mix.env == :prod,
@@ -22,7 +22,8 @@ defmodule ExAlice.Mixfile do
     [
       {:poison, "~> 2.1.0"},
       {:httpoison, "~> 0.8"},
-      {:tirexs, "~> 0.8.7"}
+      {:tirexs, "~> 0.8.7"},
+      {:gen_stage, "~> 0.5.0"}
     ]
   end
 

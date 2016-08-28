@@ -2,13 +2,17 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
   import Tirexs.Mapping
   import Tirexs.Index.Settings
+  alias Experimental.Flow
 
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
   def import(file \\ false) do
-    unless is_binary(file) do
-      file = ExAlice.Geocoder.config(:file)
-    end
+    file = case is_binary(file) do
+             true ->
+               file
+             _ ->
+               ExAlice.Geocoder.config(:file)
+           end
 
     index_name = ExAlice.Geocoder.config(:index)
     doc_type = ExAlice.Geocoder.config(:doc_type)
@@ -18,17 +22,28 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     IO.puts "Importing...  #{file}"
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
-
-    stream = file
-    |> file_stream
+    file
+    |> file_stream()
     |> chunk(chunk_number)
+    |> spawn_workers_from_stream()
 
-    ExAlice.StreamRunner.run(ExAlice.StreamRunner, stream, fn chunk ->
+  end
+
+  def spawn_workers_from_stream(stream) do
+    Flow.new(max_demand: 1)
+    |> Flow.from_enumerable(stream)
+    |> Flow.map(fn chunk ->
       Indexer.index(chunk)
     end)
+    |> Flow.run
+  end
 
-    {time, _} = :timer.tc(ExAlice.StreamRunner, :await, [ExAlice.StreamRunner])
-    IO.puts "Import completed in #{time / 1000} ms"
+  def file_stream(file) do
+    File.stream!(file, read_ahead: 100_000)
+  end
+
+  def chunk(data, chunk_number) do
+    Stream.chunk(data, chunk_number, chunk_number, [])
   end
 
   def bootstrap_index(index_name, doc_type) do
@@ -51,14 +66,5 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     end
 
     Tirexs.Mapping.create_resource(index)
-  end
-
-  def file_stream(file) do
-    File.stream!(file)
-    |> Stream.map(&String.strip/1)
-  end
-
-  def chunk(data, chunk_number) do
-    Stream.chunk(data, chunk_number, chunk_number, [])
   end
 end
