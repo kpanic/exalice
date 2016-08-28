@@ -3,13 +3,12 @@ defmodule ExAlice.Geocoder do
 
   use HTTPoison.Base
 
-  def geocode(_, _, "") do
+  def geocode("") do
     []
   end
 
-  def geocode(storage \\ ExAlice.Geocoder.config(:provider),
-              geocoder \\ ExAlice.Geocoder.config(:geocoder),
-              where) do
+  def geocode(where, storage \\ ExAlice.Geocoder.config(:provider),
+              geocoder \\ ExAlice.Geocoder.config(:geocoder)) do
     address = storage.geocode(where)
     case Enum.empty?(address) do
       true ->
