@@ -22,14 +22,14 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
           end
         end)
       true ->
-        Stream.map(Enum.into(chunks, []), fn chunk ->
+        Stream.map([chunks], fn chunk ->
           Poison.decode! chunk
         end)
     end
   end
 
   def prepare_doc(docs) do
-    Stream.map(Enum.into(docs, []), fn doc ->
+    Stream.map(docs, fn doc ->
       filter_doc(doc)
     end)
   end
@@ -107,7 +107,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp discard_unparsable_docs(docs) do
-    Enum.reject(docs, fn doc ->
+    Stream.reject(docs, fn doc ->
       [index: values] = doc
       Enum.count(values) == 1
     end)
@@ -115,11 +115,12 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp bulk_index(docs) do
 
-    payload = Tirexs.Bulk.bulk do
-      Tirexs.Bulk.index [index: @index_name, type: @doc_type], docs
-    end
-
+    docs = Enum.into(docs, [])
     unless Enum.empty?(docs) do
+      payload = Tirexs.Bulk.bulk do
+        Tirexs.Bulk.index [index: @index_name, type: @doc_type], docs
+      end
+
       {:ok, 200, r} = Tirexs.bump!(payload)._bulk()
     end
   end
