@@ -21,9 +21,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
             Poison.decode!(chunk)
           end
         end)
+
       true ->
         Stream.map([chunks], fn chunk ->
-          Poison.decode! chunk
+          Poison.decode!(chunk)
         end)
     end
   end
@@ -37,15 +38,18 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   defp filter_doc(doc) do
     case doc do
       # openstreetmap format without centroid
-      %{"lat" => lat, "lon" => lon,
-        "tags" =>
-          %{"addr:city" => city, "addr:country" => country,
-            "addr:housenumber" => housenumber, "addr:postcode" => postcode,
-            "addr:street" => street}
+      %{
+        "lat" => lat,
+        "lon" => lon,
+        "tags" => %{
+          "addr:city" => city,
+          "addr:country" => country,
+          "addr:housenumber" => housenumber,
+          "addr:postcode" => postcode,
+          "addr:street" => street
+        }
       } ->
-
-        full_address = Enum.join(
-          [country, city, street, postcode, housenumber], " ")
+        full_address = Enum.join([country, city, street, postcode, housenumber], " ")
         coordinates = [lat: lat, lon: lon]
         location = [full_address: full_address]
         metadata = [type: @doc_type]
@@ -53,40 +57,44 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
         [index: doc]
 
       # openstreetmap format with centroid
-      %{"centroid" => %{"lat" => lat, "lon" => lon},
-        "tags" =>
-          %{"addr:city" => city, "addr:country" => country,
-            "addr:housenumber" => housenumber, "addr:postcode" => postcode,
-            "addr:street" => street}
+      %{
+        "centroid" => %{"lat" => lat, "lon" => lon},
+        "tags" => %{
+          "addr:city" => city,
+          "addr:country" => country,
+          "addr:housenumber" => housenumber,
+          "addr:postcode" => postcode,
+          "addr:street" => street
+        }
       } ->
-
-          full_address = Enum.join(
-            [country, city, street, postcode, housenumber], " ")
-          coordinates = [lat: lat, lon: lon]
-          location = [full_address: full_address]
-          metadata = [type: @doc_type]
-          doc = metadata ++ coordinates ++ location
-          [index: doc]
+        full_address = Enum.join([country, city, street, postcode, housenumber], " ")
+        coordinates = [lat: lat, lon: lon]
+        location = [full_address: full_address]
+        metadata = [type: @doc_type]
+        doc = metadata ++ coordinates ++ location
+        [index: doc]
 
       # openstreetmap geocoder format
       %{lat: lat, lon: lon, full_address: full_address} ->
-
-          coordinates = [lat: lat, lon: lon]
-          location = [full_address: full_address]
-          metadata = [type: @doc_type]
-          doc = metadata ++ coordinates ++ location
-          [index: doc]
+        coordinates = [lat: lat, lon: lon]
+        location = [full_address: full_address]
+        metadata = [type: @doc_type]
+        doc = metadata ++ coordinates ++ location
+        [index: doc]
 
       # google maps format
-      %{lat: lat,
+      %{
+        lat: lat,
         location: %{
-          city: city, country: country, housenumber: housenumber,
-          postcode: postcode, street: street
+          city: city,
+          country: country,
+          housenumber: housenumber,
+          postcode: postcode,
+          street: street
         },
-        lon: lon} ->
-
-        full_address = Enum.join(
-          [country, city, street, postcode, housenumber], " ")
+        lon: lon
+      } ->
+        full_address = Enum.join([country, city, street, postcode, housenumber], " ")
         coordinates = [lat: lat, lon: lon]
         location = [full_address: full_address]
         metadata = [type: @doc_type]
@@ -100,8 +108,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   def index_docs(docs) do
-    docs
     # Discard not "pure" docs :)
+    docs
     |> discard_unparsable_docs
     |> bulk_index
   end
@@ -114,12 +122,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
   end
 
   defp bulk_index(docs) do
-
     docs = Enum.into(docs, [])
+
     unless Enum.empty?(docs) do
-      payload = Tirexs.Bulk.bulk do
-        Tirexs.Bulk.index [index: @index_name, type: @doc_type], docs
-      end
+      payload =
+        Tirexs.Bulk.bulk do
+          Tirexs.Bulk.index([index: @index_name, type: @doc_type], docs)
+        end
 
       {:ok, 200, r} = Tirexs.bump!(payload)._bulk()
     end

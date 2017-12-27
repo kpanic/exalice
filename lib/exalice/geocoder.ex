@@ -7,16 +7,23 @@ defmodule ExAlice.Geocoder do
     []
   end
 
-  def geocode(where, storage \\ ExAlice.Geocoder.config(:provider),
-              geocoder \\ ExAlice.Geocoder.config(:geocoder)) do
+  def geocode(
+        where,
+        storage \\ ExAlice.Geocoder.config(:provider),
+        geocoder \\ ExAlice.Geocoder.config(:geocoder)
+      ) do
     address = storage.geocode(where)
+
     case Enum.empty?(address) do
       true ->
         address = geocoder.geocode(where)
+
         if not Enum.empty?(address) do
           {:ok, 200, _} = store(storage, address)
         end
+
         address
+
       _ ->
         address
     end

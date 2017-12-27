@@ -5,20 +5,19 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
-
   def geocode(address) do
     index = ExAlice.Geocoder.config(:index)
 
-    locations = search [index: index] do
-      query do
-        filtered do
-          query do
-          match "index.full_address", address,
-          [operator: "and"]
+    locations =
+      search index: index do
+        query do
+          filtered do
+            query do
+              match("index.full_address", address, operator: "and")
+            end
           end
         end
       end
-    end
 
     {:ok, 200, %{hits: hits}} = Tirexs.Query.create_resource(locations)
 
