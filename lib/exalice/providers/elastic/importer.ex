@@ -1,5 +1,4 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
-
   import Tirexs.Mapping
   import Tirexs.Index.Settings
   alias Experimental.Flow
@@ -7,29 +6,31 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
   def import(file \\ false) do
-    file = case is_binary(file) do
-             true ->
-               file
-             _ ->
-               ExAlice.Geocoder.config(:file)
-           end
+    file =
+      case is_binary(file) do
+        true ->
+          file
+
+        _ ->
+          ExAlice.Geocoder.config(:file)
+      end
 
     index_name = ExAlice.Geocoder.config(:index)
     doc_type = ExAlice.Geocoder.config(:doc_type)
 
     bootstrap_index(index_name, doc_type)
 
-    IO.puts "Importing...  #{file}"
+    IO.puts("Importing...  #{file}")
 
     chunk_number = ExAlice.Geocoder.config(:chunks)
-    chunked_stream = file
-    |> file_stream()
-    |> chunk(chunk_number)
+
+    chunked_stream =
+      file
+      |> file_stream()
+      |> chunk(chunk_number)
 
     {time, _} = :timer.tc(fn -> spawn_workers_from_stream(chunked_stream) end, [])
-    IO.puts "Import completed in #{time / 1000} ms"
-
-
+    IO.puts("Import completed in #{time / 1000} ms")
   end
 
   def spawn_workers_from_stream(stream) do
@@ -38,7 +39,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     |> Flow.map(fn chunk ->
       Indexer.index(chunk)
     end)
-    |> Flow.run
+    |> Flow.run()
   end
 
   def file_stream(file) do
@@ -54,18 +55,19 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
     settings do
       analysis do
-        analyzer "autocomplete_analyzer",
-          [
-            filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
-            tokenizer: "icu_tokenizer"
-          ]
-        filter "edge_ngram", [type: "edgeNGram", min_gram: 1, max_gram: 15]
+        analyzer(
+          "autocomplete_analyzer",
+          filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
+          tokenizer: "icu_tokenizer"
+        )
+
+        filter("edge_ngram", type: "edgeNGram", min_gram: 1, max_gram: 15)
       end
     end
 
     mappings do
-      indexes "coordinates", type: "geo_point"
-      indexes "full_address", type: "string", analyzer: "autocomplete_analyzer"
+      indexes("coordinates", type: "geo_point")
+      indexes("full_address", type: "string", analyzer: "autocomplete_analyzer")
     end
 
     Tirexs.Mapping.create_resource(index)
