@@ -1,7 +1,6 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   import Tirexs.Mapping
   import Tirexs.Index.Settings
-  alias Experimental.Flow
 
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
@@ -34,8 +33,8 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   end
 
   def spawn_workers_from_stream(stream) do
-    Flow.new(max_demand: 1)
-    |> Flow.from_enumerable(stream)
+    stream
+    |> Flow.from_enumerable()
     |> Flow.map(fn chunk ->
       Indexer.index(chunk)
     end)
