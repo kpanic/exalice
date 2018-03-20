@@ -1,5 +1,4 @@
 defmodule Mix.Tasks.Exalice.Bootstrap do
-  use Application
   use Mix.Task
   @shortdoc "Bootstrap ExAlice"
 
