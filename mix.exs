@@ -5,7 +5,7 @@ defmodule ExAlice.Mixfile do
     [
       app: :exalice,
       version: "0.0.6-alpha",
-      elixir: "~> 1.3",
+      elixir: "~> 1.4",
       description: description,
       package: package,
       build_embedded: Mix.env() == :prod,
