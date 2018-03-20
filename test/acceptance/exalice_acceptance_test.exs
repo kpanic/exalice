@@ -82,6 +82,7 @@ defmodule ExAliceAcceptanceTest do
     assert Enum.empty?(result)
   end
 
+  @tag :skip
   test "expects that an address with a number in Google Maps, matches an entry in the storage" do
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.GoogleMaps)
 
