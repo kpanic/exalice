@@ -20,10 +20,10 @@ defmodule ExAlice.Mixfile do
 
   defp deps do
     [
-      {:poison, "~> 2.1.0"},
-      {:httpoison, "~> 0.8"},
+      {:poison, "~> 3.1"},
+      {:httpoison, "~> 1.0.0"},
       {:tirexs, "~> 0.8"},
-      {:gen_stage, "~> 0.5.0"}
+      {:flow, "~> 0.13"}
     ]
   end
 
