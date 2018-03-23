@@ -22,7 +22,7 @@ defmodule ExAlice.Mixfile do
     [
       {:poison, "~> 3.1"},
       {:httpoison, "~> 1.0.0"},
-      {:tirexs, "~> 0.8"},
+      {:tirexs, git: "https://github.com/Zatvobor/tirexs.git", tag: "1487b402eaa4dca28e31999846d464591afa2130"},
       {:flow, "~> 0.13"}
     ]
   end
