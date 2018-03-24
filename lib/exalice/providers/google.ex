@@ -8,21 +8,19 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
     |> parse_request
   end
 
-  defp parse_request(response) do
-    %HTTPoison.Response{:body => body} = response
-    body = Poison.decode!(body)
-    %{"results" => body} = body
+  defp parse_request(%HTTPoison.Response{body: body}) do
+    %{"results" => body} = Poison.decode!(body)
 
     body
     |> Enum.map(&extract_payload/1)
   end
 
-  defp extract_payload(body) do
+  defp extract_payload(
     %{
       "geometry" => %{"location" => %{"lat" => lat, "lng" => lon}},
       "formatted_address" => full_address
-    } = body
-
+    }
+  ) do
     %{lat: lat, lon: lon, full_address: full_address}
   end
 
