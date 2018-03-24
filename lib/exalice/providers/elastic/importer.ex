@@ -2,14 +2,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
   def import(file \\ false) do
-    file =
-      case is_binary(file) do
-        true ->
-          file
-
-        _ ->
-          ExAlice.Geocoder.config(:file)
-      end
+    file = filename(file)
 
     index_name = ExAlice.Geocoder.config(:index)
     doc_type = ExAlice.Geocoder.config(:doc_type)
@@ -28,6 +21,9 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
     {time, _} = :timer.tc(fn -> spawn_workers_from_stream(chunked_stream) end, [])
     IO.puts("Import completed in #{time / 1000} ms")
   end
+
+  defp filename(file) when is_binary(file), do: file
+  defp filename(_file), do: ExAlice.Geocoder.config(:file)
 
   def spawn_workers_from_stream(stream) do
     stream

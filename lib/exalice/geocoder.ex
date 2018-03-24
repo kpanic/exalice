@@ -1,12 +1,7 @@
 defmodule ExAlice.Geocoder do
   @behaviour Storage
 
-  use HTTPoison.Base
-
-  def geocode("") do
-    []
-  end
-
+  def geocode(""), do: []
   def geocode(
         where,
         storage \\ ExAlice.Geocoder.config(:provider),
