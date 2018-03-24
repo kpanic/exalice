@@ -1,5 +1,4 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
-  import Tirexs.Bulk
 
   @index_name ExAlice.Geocoder.config(:index)
   @doc_type ExAlice.Geocoder.config(:doc_type)
@@ -50,11 +49,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
         }
       } ->
         full_address = Enum.join([country, city, street, postcode, housenumber], " ")
-        coordinates = [lat: lat, lon: lon]
-        location = [full_address: full_address]
-        metadata = [type: @doc_type]
-        doc = metadata ++ coordinates ++ location
-        [index: doc]
+        coordinates = %{lat: lat, lon: lon}
+        location = %{full_address: full_address}
+
+        Map.merge(coordinates, location)
 
       # openstreetmap format with centroid
       %{
@@ -68,19 +66,17 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
         }
       } ->
         full_address = Enum.join([country, city, street, postcode, housenumber], " ")
-        coordinates = [lat: lat, lon: lon]
-        location = [full_address: full_address]
-        metadata = [type: @doc_type]
-        doc = metadata ++ coordinates ++ location
-        [index: doc]
+        coordinates = %{lat: lat, lon: lon}
+        location = %{full_address: full_address}
+
+        Map.merge(coordinates, location)
 
       # openstreetmap geocoder format
       %{lat: lat, lon: lon, full_address: full_address} ->
-        coordinates = [lat: lat, lon: lon]
-        location = [full_address: full_address]
-        metadata = [type: @doc_type]
-        doc = metadata ++ coordinates ++ location
-        [index: doc]
+        coordinates = %{lat: lat, lon: lon}
+        location = %{full_address: full_address}
+
+        Map.merge(coordinates, location)
 
       # google maps format
       %{
@@ -95,15 +91,13 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
         lon: lon
       } ->
         full_address = Enum.join([country, city, street, postcode, housenumber], " ")
-        coordinates = [lat: lat, lon: lon]
-        location = [full_address: full_address]
-        metadata = [type: @doc_type]
-        doc = metadata ++ coordinates ++ location
-        [index: doc]
+        coordinates = %{lat: lat, lon: lon}
+        location = %{full_address: full_address}
 
-      _ ->
-        metadata = [type: @doc_type]
-        [index: metadata]
+        Map.merge(coordinates, location)
+
+      _default ->
+        nil
     end
   end
 
@@ -116,21 +110,15 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
 
   defp discard_unparsable_docs(docs) do
     Stream.reject(docs, fn doc ->
-      [index: values] = doc
-      Enum.count(values) == 1
+      doc == nil
     end)
   end
 
   defp bulk_index(docs) do
-    docs = Enum.into(docs, [])
-
-    unless Enum.empty?(docs) do
-      payload =
-        Tirexs.Bulk.bulk do
-          Tirexs.Bulk.index([index: @index_name, type: @doc_type], docs)
-        end
-
-      {:ok, 200, r} = Tirexs.bump!(payload)._bulk()
-    end
+    docs
+    |> Enum.map(fn doc ->
+      {Elastic.Index.name(@index_name), @doc_type, nil, doc}
+    end)
+    |> Elastic.Bulk.create()
   end
 end

@@ -6,7 +6,7 @@ defmodule ExAlice.Geocoder.Providers.OpenStreetMap do
 
   def geocode(address) do
     request("/search", q: address, format: @format)
-    |> parse_request
+    |> parse_request()
   end
 
   defp parse_request(response) do

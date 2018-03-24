@@ -1,7 +1,4 @@
 defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
-  import Tirexs.Mapping
-  import Tirexs.Index.Settings
-
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
   def import(file \\ false) do
@@ -50,25 +47,30 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   end
 
   def bootstrap_index(index_name, doc_type) do
-    index = [index: index_name, type: doc_type]
 
-    settings do
-      analysis do
-        analyzer(
-          "autocomplete_analyzer",
-          filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
-          tokenizer: "icu_tokenizer"
-        )
+    settings =
+      %{
+        analysis: %{
+          filter: %{edge_ngram: %{type: "edgeNGram", min_gram: 1, max_gram: 15}},
+          analyzer: %{
+            autocomplete_analyzer: %{
+              filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
+              tokenizer: "icu_tokenizer"
+            }
+          }
+        }
+      }
 
-        filter("edge_ngram", type: "edgeNGram", min_gram: 1, max_gram: 15)
-      end
-    end
+    mappings =
+      %{
+        doc_type => %{
+          "properties" => %{
+            "coordinates" => %{"type" => "geo_point"},
+            "full_address" => %{"type" => "string", "analyzer" => "autocomplete_analyzer"}
+          }
+        }
+      }
 
-    mappings do
-      indexes("coordinates", type: "geo_point")
-      indexes("full_address", type: "string", analyzer: "autocomplete_analyzer")
-    end
-
-    Tirexs.Mapping.create_resource(index)
+    Elastic.HTTP.put("/#{index_name}", body: %{"settings" => settings, "mappings" => mappings})
   end
 end

@@ -6,34 +6,34 @@ defmodule ExAlice.Mixfile do
       app: :exalice,
       version: "0.0.6-alpha",
       elixir: "~> 1.4",
-      description: description,
-      package: package,
+      description: description(),
+      package: package(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      deps: deps
+      deps: deps()
     ]
   end
 
   def application do
-    [applications: [:logger, :httpoison, :tirexs], mod: {ExAlice, []}]
+    [applications: [:logger, :httpoison, :elastic], mod: {ExAlice, []}]
   end
 
-  defp deps do
+  defp deps() do
     [
       {:poison, "~> 3.1"},
       {:httpoison, "~> 1.0.0"},
-      {:tirexs, git: "https://github.com/Zatvobor/tirexs.git", tag: "1487b402eaa4dca28e31999846d464591afa2130"},
+      {:elastic, "~> 3.0.0"},
       {:flow, "~> 0.13"}
     ]
   end
 
-  defp description do
+  defp description() do
     """
     ExAlice, a geocoder with swappable storage
     """
   end
 
-  defp package do
+  defp package() do
     [
       files: [
         "config",
