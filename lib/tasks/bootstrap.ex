@@ -10,6 +10,6 @@ defmodule Mix.Tasks.Exalice.Bootstrap do
   def run(_) do
     Mix.Task.run("app.start", [])
     # FIXME: works only with fixed argument
-    ExAlice.Geocoder.Providers.Elastic.Importer.import()
+    ExAlice.Geocoder.Elastic.Import.import()
   end
 end

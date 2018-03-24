@@ -1,7 +1,7 @@
 defmodule ExAliceTest do
   use ExUnit.Case
 
-  import ExAlice.Geocoder.Providers.Elastic.Importer, only: [chunk: 2]
+  import ExAlice.Geocoder.Elastic.Import, only: [chunk: 2]
 
   setup_all do
     {:ok, data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}

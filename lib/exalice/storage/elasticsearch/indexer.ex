@@ -1,4 +1,4 @@
-defmodule ExAlice.Geocoder.Providers.Elastic.Indexer do
+defmodule ExAlice.Geocoder.Storage.Elastic.Indexer do
   @index_name ExAlice.Geocoder.config(:index)
   @doc_type ExAlice.Geocoder.config(:doc_type)
 

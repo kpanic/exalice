@@ -5,7 +5,7 @@ defmodule ExAliceAcceptanceTest do
   @doc_type ExAlice.Geocoder.config(:doc_type)
   @storage ExAlice.Geocoder.config(:provider)
 
-  import ExAlice.Geocoder.Providers.Elastic.Importer,
+  import ExAlice.Geocoder.Elastic.Import,
     only: [file_stream: 1, bootstrap_index: 2, chunk: 2]
 
   setup do

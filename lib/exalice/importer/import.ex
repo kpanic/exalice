@@ -1,5 +1,5 @@
-defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
-  alias ExAlice.Geocoder.Providers.Elastic.Indexer
+defmodule ExAlice.Geocoder.Elastic.Import do
+  alias ExAlice.Geocoder.Storage.Elastic.Indexer
 
   def import(file \\ false) do
     file = filename(file)

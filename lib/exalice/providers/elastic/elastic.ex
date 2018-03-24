@@ -6,7 +6,7 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
   alias __MODULE__, as: ES
 
-  alias ExAlice.Geocoder.Providers.Elastic.Indexer
+  alias ExAlice.Geocoder.Storage.Elastic.Indexer
 
   def geocode(address) do
     locations = %{
