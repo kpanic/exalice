@@ -8,17 +8,14 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
 
   alias ExAlice.Geocoder.Providers.Elastic.Indexer
 
-
   def geocode(address) do
-    locations =
-      %{
-        query: %{
-          filtered: %{
-            query: %{match: %{"full_address": %{query: address, operator: "and"}}}
-          }
+    locations = %{
+      query: %{
+        filtered: %{
+          query: %{match: %{full_address: %{query: address, operator: "and"}}}
         }
       }
-
+    }
 
     {:ok, 200, %{"hits" => %{"hits" => hits}}} = ES.raw_search(locations)
 

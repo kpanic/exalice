@@ -15,12 +15,10 @@ defmodule ExAlice.Geocoder.Providers.GoogleMaps do
     |> Enum.map(&extract_payload/1)
   end
 
-  defp extract_payload(
-    %{
-      "geometry" => %{"location" => %{"lat" => lat, "lng" => lon}},
-      "formatted_address" => full_address
-    }
-  ) do
+  defp extract_payload(%{
+         "geometry" => %{"location" => %{"lat" => lat, "lng" => lon}},
+         "formatted_address" => full_address
+       }) do
     %{lat: lat, lon: lon, full_address: full_address}
   end
 

@@ -2,6 +2,7 @@ defmodule ExAlice.Geocoder do
   @behaviour Storage
 
   def geocode(""), do: []
+
   def geocode(
         where,
         storage \\ ExAlice.Geocoder.config(:provider),
@@ -12,9 +13,8 @@ defmodule ExAlice.Geocoder do
     with true <- Enum.empty?(address),
          address = geocoder.geocode(where),
          true <- not Enum.empty?(address),
-         {:ok, 200, _} <- store(storage, address)
-    do
-          address
+         {:ok, 200, _} <- store(storage, address) do
+      address
     else
       _ -> address
     end

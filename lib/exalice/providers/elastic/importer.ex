@@ -42,29 +42,26 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
   end
 
   def bootstrap_index(index_name, doc_type) do
-
-    settings =
-      %{
-        analysis: %{
-          filter: %{edge_ngram: %{type: "edgeNGram", min_gram: 1, max_gram: 15}},
-          analyzer: %{
-            autocomplete_analyzer: %{
-              filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
-              tokenizer: "icu_tokenizer"
-            }
+    settings = %{
+      analysis: %{
+        filter: %{edge_ngram: %{type: "edgeNGram", min_gram: 1, max_gram: 15}},
+        analyzer: %{
+          autocomplete_analyzer: %{
+            filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
+            tokenizer: "icu_tokenizer"
           }
         }
       }
+    }
 
-    mappings =
-      %{
-        doc_type => %{
-          "properties" => %{
-            "coordinates" => %{"type" => "geo_point"},
-            "full_address" => %{"type" => "string", "analyzer" => "autocomplete_analyzer"}
-          }
+    mappings = %{
+      doc_type => %{
+        "properties" => %{
+          "coordinates" => %{"type" => "geo_point"},
+          "full_address" => %{"type" => "string", "analyzer" => "autocomplete_analyzer"}
         }
       }
+    }
 
     Elastic.HTTP.put("/#{index_name}", body: %{"settings" => settings, "mappings" => mappings})
   end
