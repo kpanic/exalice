@@ -22,8 +22,7 @@ defmodule ExAlice.Mixfile do
     [
       {:poison, "~> 3.1"},
       {:httpoison, "~> 1.0.0"},
-      {:elastic, "~> 3.0.0"},
-      {:flow, "~> 0.13"}
+      {:elastic, "~> 3.0.0"}
     ]
   end
 
