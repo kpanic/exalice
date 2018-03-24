@@ -15,7 +15,7 @@ defmodule ExAlice.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :httpoison, :elastic], mod: {ExAlice, []}]
+    [applications: [:logger, :httpoison, :elastic]]
   end
 
   defp deps() do

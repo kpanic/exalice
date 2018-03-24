@@ -8,8 +8,6 @@ defmodule ExAliceAcceptanceTest do
   import ExAlice.Geocoder.Providers.Elastic.Importer,
     only: [file_stream: 1, bootstrap_index: 2, chunk: 2]
 
-  doctest ExAlice
-
   setup do
     bootstrap_index(@index_name, @doc_type)
     Elastic.Index.refresh(@index_name)

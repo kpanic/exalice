@@ -3,8 +3,6 @@ defmodule ExAliceTest do
 
   import ExAlice.Geocoder.Providers.Elastic.Importer, only: [chunk: 2]
 
-  doctest ExAlice
-
   setup_all do
     {:ok, data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
   end
