@@ -31,11 +31,10 @@ defmodule ExAlice.Geocoder.Providers.Elastic.Importer do
 
   def spawn_workers_from_stream(stream) do
     stream
-    |> Flow.from_enumerable()
-    |> Flow.map(fn chunk ->
+    |> Task.async_stream(fn chunk ->
       Indexer.index(chunk)
     end)
-    |> Flow.run()
+    |> Stream.run()
   end
 
   def file_stream(file) do
