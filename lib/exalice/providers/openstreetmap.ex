@@ -1,7 +1,7 @@
 defmodule ExAlice.Geocoder.Providers.OpenStreetMap do
   use HTTPoison.Base
 
-  @endpoint "http://nominatim.openstreetmap.org"
+  @endpoint "https://nominatim.openstreetmap.org"
   @format "json"
 
   def geocode(address) do
