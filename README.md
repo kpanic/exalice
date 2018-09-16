@@ -33,21 +33,13 @@ mix exalice.bootstrap # Populate the storage with sample data in this repository
 
 ```elixir
 def deps do
-  [{:exalice, "~> 0.0.6-alpha"}]
+  [{:exalice, "~> 0.0.7-alpha"}]
 end
 ```
 
-  2. Ensure exalice is started before your application:
+  2. Ensure that Elasticsearch 6.4.0 is installed
 
-```elixir
-def application do
-  [applications: [:exalice]]
-end
-```
-
-  3. Ensure that Elasticsearch 6.4.0 is installed
-
-  4. Ensure that the analysis-icu plugin is installed:
+  3. Ensure that the analysis-icu plugin is installed:
 
 ```bash
 sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
@@ -55,9 +47,9 @@ sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
 
     The path might vary between different operating systems
 
-  5. Ensure that Elasticsearch is started
+  4. Ensure that Elasticsearch is started
 
-  6. Add to your config/config.exs:
+  5. Add to your config/config.exs:
 
 ```elixir
 config :exalice,
