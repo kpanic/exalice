@@ -47,7 +47,7 @@ defmodule ExAlice.Geocoder.Elastic.Import do
         filter: %{edge_ngram: %{type: "edgeNGram", min_gram: 1, max_gram: 15}},
         analyzer: %{
           autocomplete_analyzer: %{
-            filter: ["icu_normalizer", "icu_folding", "edge_ngram"],
+            filter: ["icu_normalizer", "icu_folding"],
             tokenizer: "icu_tokenizer"
           }
         }
@@ -58,7 +58,7 @@ defmodule ExAlice.Geocoder.Elastic.Import do
       doc_type => %{
         "properties" => %{
           "coordinates" => %{"type" => "geo_point"},
-          "full_address" => %{"type" => "string", "analyzer" => "autocomplete_analyzer"}
+          "full_address" => %{"type" => "text", "analyzer" => "autocomplete_analyzer"}
         }
       }
     }

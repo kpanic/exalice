@@ -11,8 +11,14 @@ defmodule ExAlice.Geocoder.Providers.Elastic do
   def geocode(address) do
     locations = %{
       query: %{
-        filtered: %{
-          query: %{match: %{full_address: %{query: address, operator: "and"}}}
+        bool: %{
+          must: %{
+            multi_match: %{
+              operator: "and",
+              fields: [:full_address],
+              query: address
+            }
+          }
         }
       }
     }

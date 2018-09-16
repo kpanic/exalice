@@ -118,6 +118,6 @@ defmodule ExAlice.Geocoder.Storage.Elastic.Indexer do
     |> Enum.map(fn doc ->
       {Elastic.Index.name(@index_name), @doc_type, nil, doc}
     end)
-    |> Elastic.Bulk.create()
+    |> Elastic.Bulk.index()
   end
 end

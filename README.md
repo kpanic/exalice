@@ -6,12 +6,12 @@
 
 ## Installation of exalice from this repository
 
-  1. Ensure that Elasticsearch 2.2.x is installed
+  1. Ensure that Elasticsearch 6.4.0 is installed
 
   2. Ensure that the analysis-icu plugin is installed:
 
         # On Debian based systems
-        sudo /usr/share/elasticsearch/bin/plugin install analysis-icu
+        sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
 
     The path of the `plugin` command varies between different operating systems
 
@@ -35,11 +35,11 @@
           [applications: [:exalice]]
         end
 
-  3. Ensure that Elasticsearch 2.2.x is installed
+  3. Ensure that Elasticsearch 6.4.0 is installed
 
   4. Ensure that the analysis-icu plugin is installed:
 
-        sudo /usr/share/elasticsearch/bin/plugin install analysis-icu
+        sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
 
     The path might vary between different operating systems
 
