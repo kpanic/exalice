@@ -11,9 +11,8 @@
   2. Ensure that the analysis-icu plugin is installed:
 
 ```bash
-
-        # On Debian based systems
-        sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
+# On Debian based systems
+sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
 ```
 
     The path of the `plugin` command varies between different operating systems
@@ -23,7 +22,7 @@
   4. Run the import (after fetching deps, and compiling everything):
 
 ```bash
-        mix exalice.bootstrap # Populate the storage with sample data in this repository
+mix exalice.bootstrap # Populate the storage with sample data in this repository
 ```
 
 ## When exalice is used as an external dependency in your application
@@ -31,17 +30,17 @@
   1. Add exalice to your list of dependencies in `mix.exs`:
 
 ```elixir
-        def deps do
-          [{:exalice, "~> 0.0.6-alpha"}]
-        end
+def deps do
+  [{:exalice, "~> 0.0.6-alpha"}]
+end
 ```
 
   2. Ensure exalice is started before your application:
 
 ```elixir
-        def application do
-          [applications: [:exalice]]
-        end
+def application do
+  [applications: [:exalice]]
+end
 ```
 
   3. Ensure that Elasticsearch 6.4.0 is installed
@@ -49,7 +48,7 @@
   4. Ensure that the analysis-icu plugin is installed:
 
 ```bash
-        sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
+sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu
 ```
 
     The path might vary between different operating systems
@@ -59,13 +58,13 @@
   6. Add to your config/config.exs:
 
 ```elixir
-    config :exalice,
-          provider: ExAlice.Geocoder.Providers.Elastic,
-          geocoder: ExAlice.Geocoder.Providers.OpenStreetMap,
-          index: :exalice,
-          doc_type: :location,
-          file: "data/germany-streets.json",
-          chunks: 5000
+config :exalice,
+      provider: ExAlice.Geocoder.Providers.Elastic,
+      geocoder: ExAlice.Geocoder.Providers.OpenStreetMap,
+      index: :exalice,
+      doc_type: :location,
+      file: "data/germany-streets.json",
+      chunks: 5000
 ```
 
     The available options for the `geocoder:` are
