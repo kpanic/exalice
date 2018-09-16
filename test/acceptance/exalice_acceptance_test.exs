@@ -38,7 +38,7 @@ defmodule ExAliceAcceptanceTest do
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.GoogleMaps)
 
     # Geocode and store in the storage
-    ExAlice.Geocoder.geocode("Via dei Recoaro 3, Broni")
+    ExAlice.Geocoder.geocode("Via Recoaro, Broni")
     Elastic.Index.refresh(@index_name)
 
     result = ExAlice.Geocoder.geocode("Via dei Recoaro")
@@ -81,10 +81,10 @@ defmodule ExAliceAcceptanceTest do
   test "expects that an address with a number in Google Maps, matches an entry in the storage" do
     Application.put_env(:exalice, :geocoder, ExAlice.Geocoder.Providers.GoogleMaps)
 
-    ExAlice.Geocoder.geocode("Via Parini 3, Broni")
+    ExAlice.Geocoder.geocode("Via Emilia 102, Broni")
     Elastic.Index.refresh(@index_name)
 
-    result = @storage.geocode("Via Parini 3")
+    result = @storage.geocode("Via Emilia 102")
 
     assert not Enum.empty?(result) == true
   end
