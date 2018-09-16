@@ -38,7 +38,7 @@ defmodule ExAlice.Geocoder.Elastic.Import do
   end
 
   def chunk(data, chunk_number) do
-    Stream.chunk(data, chunk_number, chunk_number, [])
+    Stream.chunk_every(data, chunk_number, chunk_number, [])
   end
 
   def bootstrap_index(index_name, doc_type) do
