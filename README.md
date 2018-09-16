@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/kpanic/exalice.svg?branch=master)](https://travis-ci.org/kpanic/exalice)
 
+![Alice in wonderland!](/pic/alice-in-wonderland.png)
+
 **WARNING: This is alpha software, do not use in production!**
 
 ## Installation of exalice from this repository
